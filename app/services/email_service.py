@@ -7,12 +7,97 @@ Senior Software Engineer — Python | Django | FastAPI | Generative AI & Agentic
 
 import smtplib
 import logging
+from typing import Tuple, Dict, Any
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from app.core.config import settings
+from app.core.database import SessionLocal
+from app.models.admin import SystemSetting
 
 logger = logging.getLogger("portfolio.email")
+
+
+def get_effective_smtp_config() -> Dict[str, Any]:
+    """Retrieve active SMTP credentials from SQLite with fallback to environment/settings."""
+    config = {
+        "smtp_host": settings.SMTP_HOST or "smtp.gmail.com",
+        "smtp_port": settings.SMTP_PORT or 587,
+        "smtp_user": settings.SMTP_USER or "vivekjais16@gmail.com",
+        "smtp_password": settings.SMTP_PASSWORD or "",
+        "notification_email": settings.NOTIFICATION_EMAIL or settings.AUTHOR_EMAIL or "vivekjais16@gmail.com",
+    }
+
+    try:
+        db = SessionLocal()
+        try:
+            settings_rows = db.query(SystemSetting).all()
+            for row in settings_rows:
+                if row.key == "SMTP_HOST" and row.value:
+                    config["smtp_host"] = row.value
+                elif row.key == "SMTP_PORT" and row.value:
+                    config["smtp_port"] = int(row.value)
+                elif row.key == "SMTP_USER" and row.value:
+                    config["smtp_user"] = row.value
+                elif row.key == "SMTP_PASSWORD" and row.value:
+                    config["smtp_password"] = row.value
+                elif row.key == "NOTIFICATION_EMAIL" and row.value:
+                    config["notification_email"] = row.value
+        finally:
+            db.close()
+    except Exception as e:
+        logger.debug(f"Could not read SystemSetting from DB: {e}")
+
+    return config
+
+
+def send_test_email(
+    smtp_host: str,
+    smtp_port: int,
+    smtp_user: str,
+    smtp_password: str,
+    recipient: str,
+) -> Tuple[bool, str]:
+    """Sends a verification email to test SMTP connectivity and credentials."""
+    if not smtp_password or not smtp_password.strip():
+        return False, "SMTP Password is empty. Please enter your 16-character Google App Password."
+
+    clean_password = smtp_password.replace(" ", "").strip()
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = "✅ [FastAPI Portfolio] SMTP Email Notification Test Successful!"
+    msg["From"] = smtp_user
+    msg["To"] = recipient
+
+    body = f"""
+    <!DOCTYPE html>
+    <html>
+    <body style="font-family: sans-serif; background: #0f172a; color: #f8fafc; padding: 24px;">
+        <div style="max-width: 550px; margin: 0 auto; background: #1e293b; border: 1px solid #10b981; border-radius: 12px; padding: 24px;">
+            <h2 style="color: #10b981; margin-top: 0;">🚀 Direct Email Forwarding Active</h2>
+            <p>Hi Vivek,</p>
+            <p>Your FastAPI portfolio email forwarding system is now <strong>100% connected and operational</strong>.</p>
+            <p>Whenever a recruiter or hiring manager submits a message on your portfolio, it will be delivered directly to this inbox (<strong>{recipient}</strong>) in real time.</p>
+            <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
+            <p style="font-size: 12px; color: #94a3b8;">Sent via FastAPI • SQLAlchemy 2.0 • Render Cloud Production Engine</p>
+        </div>
+    </body>
+    </html>
+    """
+    msg.attach(MIMEText(body, "html"))
+
+    try:
+        if smtp_port == 465:
+            server = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=12)
+        else:
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=12)
+            server.starttls()
+
+        server.login(smtp_user, clean_password)
+        server.send_message(msg)
+        server.quit()
+        return True, f"Test email successfully sent to {recipient}! Please check your Gmail inbox."
+    except Exception as exc:
+        return False, f"SMTP Connection Failed: {str(exc)}"
 
 
 def send_contact_email_notification(
@@ -25,19 +110,25 @@ def send_contact_email_notification(
     Sends an instant email alert to Vivek Jaiswal's personal email when a new inquiry arrives.
     Executed asynchronously in a background task.
     """
-    if not settings.SMTP_PASSWORD:
+    cfg = get_effective_smtp_config()
+    smtp_password = cfg["smtp_password"].replace(" ", "").strip() if cfg["smtp_password"] else ""
+
+    if not smtp_password:
         logger.info(
             f"SMTP not configured (SMTP_PASSWORD empty). Message from '{sender_name}' ({sender_email}) "
             f"was safely saved to SQLite database."
         )
         return False
 
-    recipient = settings.NOTIFICATION_EMAIL or settings.AUTHOR_EMAIL
+    recipient = cfg["notification_email"]
+    smtp_user = cfg["smtp_user"]
+    smtp_host = cfg["smtp_host"]
+    smtp_port = cfg["smtp_port"]
 
     # Construct Email
     msg = MIMEMultipart("alternative")
     msg["Subject"] = f"🚀 [Portfolio Inquiry] {subject} (from {sender_name})"
-    msg["From"] = settings.SMTP_USER or settings.AUTHOR_EMAIL
+    msg["From"] = smtp_user
     msg["To"] = recipient
     msg["Reply-To"] = sender_email
 
@@ -104,13 +195,13 @@ You can reply directly to this email to reach {sender_name}.
     msg.attach(MIMEText(html_content, "html"))
 
     try:
-        if settings.SMTP_PORT == 465:
-            server = smtplib.SMTP_SSL(settings.SMTP_HOST, settings.SMTP_PORT, timeout=10)
+        if smtp_port == 465:
+            server = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10)
         else:
-            server = smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=10)
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=10)
             server.starttls()
 
-        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+        server.login(smtp_user, smtp_password)
         server.send_message(msg)
         server.quit()
         logger.info(f"✓ Direct email alert dispatched to {recipient} for message from {sender_name}")

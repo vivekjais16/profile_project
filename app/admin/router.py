@@ -22,9 +22,10 @@ from app.models.skill import SkillCategory, Skill
 from app.models.project import Project
 from app.models.education import Education, Achievement, SoftSkill
 from app.models.contact import ContactMessage, AIAgentQuery
-from app.models.admin import AdminUser, hash_password
+from app.models.admin import AdminUser, SystemSetting, hash_password
 from app.services.portfolio_service import PortfolioService
 from app.services.seeder_service import seed_portfolio_data
+from app.services.email_service import get_effective_smtp_config, send_test_email
 from app.admin.auth import (
     generate_session_token,
     get_current_admin,
@@ -783,6 +784,7 @@ async def admin_settings_view(
     db: Session = Depends(get_db),
 ):
     user = db.query(AdminUser).filter(AdminUser.username == admin_user).first()
+    smtp_cfg = get_effective_smtp_config()
     return templates.TemplateResponse(
         request=request,
         name="admin/settings.html",
@@ -790,6 +792,7 @@ async def admin_settings_view(
             "admin_user": admin_user,
             "user": user,
             "settings": settings,
+            "smtp_cfg": smtp_cfg,
             "msg": None,
             "err": None,
         },
@@ -819,6 +822,7 @@ async def admin_update_credentials(
     db.commit()
 
     token = generate_session_token(user.username)
+    smtp_cfg = get_effective_smtp_config()
     response = templates.TemplateResponse(
         request=request,
         name="admin/settings.html",
@@ -826,6 +830,7 @@ async def admin_update_credentials(
             "admin_user": user.username,
             "user": user,
             "settings": settings,
+            "smtp_cfg": smtp_cfg,
             "msg": "Credentials updated successfully! Use your new credentials for future logins.",
             "err": None,
         },
@@ -840,6 +845,71 @@ async def admin_update_credentials(
     return response
 
 
+@admin_router.post("/settings/smtp", response_class=HTMLResponse)
+async def admin_update_smtp(
+    request: Request,
+    smtp_user: str = Form(...),
+    smtp_password: str = Form(""),
+    notification_email: str = Form(...),
+    smtp_host: str = Form("smtp.gmail.com"),
+    smtp_port: int = Form(587),
+    send_test: Optional[str] = Form(None),
+    admin_user: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    user = db.query(AdminUser).filter(AdminUser.username == admin_user).first()
+
+    # Upsert settings into SystemSetting table
+    def upsert_setting(k: str, v: str, desc: str = ""):
+        s = db.query(SystemSetting).filter(SystemSetting.key == k).first()
+        if not s:
+            s = SystemSetting(key=k, value=v, description=desc)
+            db.add(s)
+        else:
+            s.value = v
+
+    upsert_setting("SMTP_USER", smtp_user.strip(), "SMTP Username / Gmail address")
+    if smtp_password and smtp_password.strip():
+        upsert_setting("SMTP_PASSWORD", smtp_password.strip(), "Google 16-character App Password")
+    upsert_setting("NOTIFICATION_EMAIL", notification_email.strip(), "Inquiry notification recipient")
+    upsert_setting("SMTP_HOST", smtp_host.strip(), "SMTP server host")
+    upsert_setting("SMTP_PORT", str(smtp_port), "SMTP port")
+    db.commit()
+
+    smtp_cfg = get_effective_smtp_config()
+    msg = None
+    err = None
+
+    if send_test or (smtp_password and smtp_password.strip()):
+        pw_to_test = smtp_cfg["smtp_password"]
+        success, test_res = send_test_email(
+            smtp_host=smtp_cfg["smtp_host"],
+            smtp_port=smtp_cfg["smtp_port"],
+            smtp_user=smtp_cfg["smtp_user"],
+            smtp_password=pw_to_test,
+            recipient=smtp_cfg["notification_email"],
+        )
+        if success:
+            msg = f"✅ SMTP Settings saved and test email sent successfully to {smtp_cfg['notification_email']}!"
+        else:
+            err = f"⚠️ Settings saved, but test email failed: {test_res}"
+    else:
+        msg = "SMTP Configuration saved successfully!"
+
+    return templates.TemplateResponse(
+        request=request,
+        name="admin/settings.html",
+        context={
+            "admin_user": admin_user,
+            "user": user,
+            "settings": settings,
+            "smtp_cfg": smtp_cfg,
+            "msg": msg,
+            "err": err,
+        },
+    )
+
+
 @admin_router.post("/reseed")
 async def admin_reseed_database(
     admin_user: str = Depends(require_admin),
@@ -847,3 +917,4 @@ async def admin_reseed_database(
 ):
     seed_portfolio_data(db, force=True)
     return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
+

@@ -35,3 +35,14 @@ class AdminUser(Base):
 
     def set_password(self, plain_password: str) -> None:
         self.password_hash = hash_password(plain_password)
+
+
+class SystemSetting(Base):
+    """Dynamic key-value system settings (e.g. SMTP credentials, notification preferences)."""
+    __tablename__ = "system_settings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    key = Column(String(100), unique=True, nullable=False, index=True)
+    value = Column(String(500), nullable=True)
+    description = Column(String(255), nullable=True)
+
