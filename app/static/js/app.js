@@ -5,19 +5,52 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Mobile Menu Toggle & Auto-Close on Navigation
+    // 1. Main Portfolio Mobile Navigation Toggle
     const mobileMenuBtn = document.getElementById("mobile-menu-btn");
     const mobileMenu = document.getElementById("mobile-menu");
+    const mobileMenuIcon = document.getElementById("mobile-menu-icon");
+
     if (mobileMenuBtn && mobileMenu) {
-        mobileMenuBtn.addEventListener("click", () => {
-            mobileMenu.classList.toggle("hidden");
+        mobileMenuBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isHidden = mobileMenu.classList.contains("hidden");
+            if (isHidden) {
+                mobileMenu.classList.remove("hidden");
+                if (mobileMenuIcon) {
+                    mobileMenuIcon.classList.remove("fa-bars");
+                    mobileMenuIcon.classList.add("fa-xmark");
+                }
+            } else {
+                mobileMenu.classList.add("hidden");
+                if (mobileMenuIcon) {
+                    mobileMenuIcon.classList.remove("fa-xmark");
+                    mobileMenuIcon.classList.add("fa-bars");
+                }
+            }
         });
 
-        // Close mobile menu when any nav link is tapped
-        mobileMenu.querySelectorAll("a").forEach((link) => {
+        // Close when clicking any navigation link
+        document.querySelectorAll(".mobile-nav-link").forEach((link) => {
             link.addEventListener("click", () => {
                 mobileMenu.classList.add("hidden");
+                if (mobileMenuIcon) {
+                    mobileMenuIcon.classList.remove("fa-xmark");
+                    mobileMenuIcon.classList.add("fa-bars");
+                }
             });
+        });
+
+        // Close when clicking outside header / menu drawer
+        document.addEventListener("click", (e) => {
+            if (!mobileMenu.classList.contains("hidden")) {
+                if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    mobileMenu.classList.add("hidden");
+                    if (mobileMenuIcon) {
+                        mobileMenuIcon.classList.remove("fa-xmark");
+                        mobileMenuIcon.classList.add("fa-bars");
+                    }
+                }
+            }
         });
     }
 
@@ -25,7 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminMobileBtn = document.getElementById("admin-mobile-menu-btn");
     const adminSidebar = document.getElementById("admin-sidebar");
     if (adminMobileBtn && adminSidebar) {
-        adminMobileBtn.addEventListener("click", () => {
+        adminMobileBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
             adminSidebar.classList.toggle("hidden");
         });
     }

@@ -100,26 +100,26 @@
             </div>
 
             <!-- Mobile Hamburger -->
-            <button id="mobile-menu-btn" type="button" onclick="toggleMobileNav()" class="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none" aria-label="Toggle Navigation Menu">
-                <i id="mobile-menu-icon" data-lucide="menu" class="w-6 h-6"></i>
+            <button id="mobile-menu-btn" type="button" class="lg:hidden p-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition cursor-pointer" aria-label="Toggle Navigation Menu">
+                <i id="mobile-menu-icon" class="fa-solid fa-bars text-xl"></i>
             </button>
         </div>
 
         <!-- Mobile Menu Drawer -->
         <div id="mobile-menu" class="hidden lg:hidden px-4 pt-2 pb-6 space-y-2 border-t border-slate-800 bg-dark-950/98 backdrop-blur-2xl shadow-2xl transition-all">
-            <a href="#about" onclick="closeMobileNav()" class="block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">About</a>
-            <a href="#experience" onclick="closeMobileNav()" class="block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">Experience</a>
-            <a href="#skills" onclick="closeMobileNav()" class="block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">Tech Stack</a>
-            <a href="#projects" onclick="closeMobileNav()" class="block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">Architecture</a>
-            <a href="#ai-assistant" onclick="closeMobileNav()" class="block px-3.5 py-2.5 rounded-xl text-base font-medium text-indigo-300 hover:bg-slate-800 hover:text-indigo-200 transition flex items-center gap-2">
-                <i data-lucide="bot" class="w-4 h-4 text-indigo-400"></i> AI Assistant
+            <a href="#about" class="mobile-nav-link block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">About</a>
+            <a href="#experience" class="mobile-nav-link block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">Experience</a>
+            <a href="#skills" class="mobile-nav-link block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">Tech Stack</a>
+            <a href="#projects" class="mobile-nav-link block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">Architecture</a>
+            <a href="#ai-assistant" class="mobile-nav-link block px-3.5 py-2.5 rounded-xl text-base font-medium text-indigo-300 hover:bg-slate-800 hover:text-indigo-200 transition flex items-center gap-2">
+                <i class="fa-solid fa-robot text-indigo-400"></i> AI Assistant
             </a>
-            <a href="#achievements" onclick="closeMobileNav()" class="block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">Achievements</a>
-            <a href="/download-resume" onclick="closeMobileNav()" class="block px-3.5 py-2.5 rounded-xl text-base font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 hover:bg-emerald-900/50 transition flex items-center gap-2">
-                <i data-lucide="file-down" class="w-4 h-4"></i> Download Resume (PDF)
+            <a href="#achievements" class="mobile-nav-link block px-3.5 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition">Achievements</a>
+            <a href="/download-resume" class="mobile-nav-link block px-3.5 py-2.5 rounded-xl text-base font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 hover:bg-emerald-900/50 transition flex items-center gap-2">
+                <i class="fa-solid fa-file-arrow-down text-emerald-400"></i> Download Resume (PDF)
             </a>
-            <a href="#contact" onclick="closeMobileNav()" class="block px-3.5 py-2.5 rounded-xl text-base font-medium text-teal-300 hover:bg-slate-800 transition flex items-center gap-2">
-                <i data-lucide="send" class="w-4 h-4"></i> Contact
+            <a href="#contact" class="mobile-nav-link block px-3.5 py-2.5 rounded-xl text-base font-medium text-teal-300 hover:bg-slate-800 transition flex items-center gap-2">
+                <i class="fa-solid fa-paper-plane text-teal-400"></i> Contact
             </a>
         </div>
     </header>
@@ -164,33 +164,8 @@
     </footer>
 
     <!-- App JavaScript -->
-    <script src="/static/js/app.js?v=2.2"></script>
+    <script src="/static/js/app.js?v=2.5"></script>
     <script>
-        // Global Mobile Nav Controllers
-        function toggleMobileNav() {
-            const menu = document.getElementById('mobile-menu');
-            if (menu) {
-                menu.classList.toggle('hidden');
-            }
-        }
-        function closeMobileNav() {
-            const menu = document.getElementById('mobile-menu');
-            if (menu && !menu.classList.contains('hidden')) {
-                menu.classList.add('hidden');
-            }
-        }
-
-        // Close on clicking outside header
-        document.addEventListener('click', (e) => {
-            const menu = document.getElementById('mobile-menu');
-            const btn = document.getElementById('mobile-menu-btn');
-            if (menu && !menu.classList.contains('hidden')) {
-                if (!menu.contains(e.target) && !btn.contains(e.target)) {
-                    menu.classList.add('hidden');
-                }
-            }
-        });
-
         // Initialize Lucide icons
         lucide.createIcons();
     </script>
