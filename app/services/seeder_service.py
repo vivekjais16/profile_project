@@ -71,7 +71,7 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
     # 2. Metric Statistics
     metrics = [
         MetricStat(label="Production Scale", value="4.5+ Yrs", subtext="Senior Backend & AI Engineer", icon="calendar", display_order=1),
-        MetricStat(label="API Throughput", value="12K+ RPM", subtext="Async FastAPI • p99 < 45ms", icon="zap", display_order=2),
+        MetricStat(label="HackerRank Certified", value="5-Star ★", subtext="Python & SQL Gold Badges", icon="award", display_order=2),
         MetricStat(label="Stream Ingestion", value="100GB+/day", subtext="Kafka & PySpark Streaming", icon="database", display_order=3),
         MetricStat(label="Cloud Resilience", value="99.99%", subtext="AWS Microservices Uptime", icon="server", display_order=4),
     ]
