@@ -427,6 +427,7 @@ function openProjectModal(index) {
 
     // Reveal modal
     modal.classList.remove("hidden");
+    modal.classList.add("active");
     document.body.style.overflow = "hidden";
 }
 
@@ -499,6 +500,7 @@ function openExperienceModal(index) {
 
     // Reveal modal
     modal.classList.remove("hidden");
+    modal.classList.add("active");
     document.body.style.overflow = "hidden";
 }
 
@@ -506,11 +508,12 @@ function openExperienceModal(index) {
  * Close Modal Dialog
  */
 function closeShowcaseModal(event) {
-    if (event && event.target && event.target.id !== "showcase-modal" && !event.target.closest(".modal-close-btn") && !event.target.closest("button")) {
+    if (event && event.target && event.target.id !== "showcase-modal" && !event.target.closest(".modal-close-btn") && !event.target.closest("#modal-close-action-btn")) {
         return;
     }
     const modal = document.getElementById("showcase-modal");
     if (modal) {
+        modal.classList.remove("active");
         modal.classList.add("hidden");
         document.body.style.overflow = "";
     }
@@ -520,10 +523,15 @@ function closeShowcaseModal(event) {
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
         const modal = document.getElementById("showcase-modal");
-        if (modal && !modal.classList.contains("hidden")) {
-            modal.classList.add("hidden");
-            document.body.style.overflow = "";
+        if (modal && (modal.classList.contains("active") || !modal.classList.contains("hidden"))) {
+            closeShowcaseModal();
         }
     }
 });
+
+// Explicitly bind to window for inline onclick handlers
+window.scrollRow = scrollRow;
+window.openProjectModal = openProjectModal;
+window.openExperienceModal = openExperienceModal;
+window.closeShowcaseModal = closeShowcaseModal;
 

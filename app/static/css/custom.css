@@ -272,17 +272,14 @@ body {
   border-radius: 9999px;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Modal Dialog & Overlay */
-/* -------------------------------------------------------------------------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(3, 7, 18, 0.85);
+  background-color: rgba(3, 7, 18, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   z-index: 100;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 1rem;
@@ -292,6 +289,7 @@ body {
 }
 
 .modal-overlay.active {
+  display: flex;
   opacity: 1;
   pointer-events: auto;
 }
