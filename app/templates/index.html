@@ -32,7 +32,7 @@
                     {{ profile.full_name }}
                 </h1>
                 <p class="text-lg sm:text-2xl font-bold gradient-text-indigo">
-                    The Backend & Autonomous Agentic AI Architect
+                    {{ profile.headline if profile and profile.headline else 'The Backend & Autonomous Agentic AI Architect' }}
                 </p>
             </div>
 

@@ -36,7 +36,7 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
     # 1. Profile Core
     profile = Profile(
         full_name="VIVEK JAISWAL",
-        headline="Senior Software Engineer — Python | Django | FastAPI | Generative AI & Agentic AI",
+        headline="The Backend & Autonomous Agentic AI Architect",
         sub_headline="Architecting resilient microservices, autonomous LLM agents (LangGraph), and high-throughput data platforms",
         email="vivekjais16@gmail.com",
         phone="+91 8920171244",
