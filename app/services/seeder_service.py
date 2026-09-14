@@ -493,4 +493,14 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
     ]
     db.add_all(soft_skills)
 
+    # 9. Ensure Default Admin User exists
+    from app.models.admin import AdminUser, hash_password
+    admin = db.query(AdminUser).filter(AdminUser.username == "vivekjais16").first()
+    if not admin:
+        db.add(AdminUser(
+            username="vivekjais16",
+            password_hash=hash_password("VivekAdmin@2026"),
+            email="vivekjais16@gmail.com",
+        ))
+
     db.commit()

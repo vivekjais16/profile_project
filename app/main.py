@@ -14,7 +14,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app.core.config import settings, BASE_DIR
-from app.core.database import init_db, get_db
+from app.core.database import init_db, SessionLocal, get_db
+from app.services.seeder_service import seed_portfolio_data
 from app.services.portfolio_service import PortfolioService
 from app.api.v1.router import api_router
 from app.admin.router import admin_router
@@ -24,11 +25,18 @@ from app.admin.router import admin_router
 async def lifespan(app: FastAPI):
     """
     Application lifespan context manager:
-    - Automatically builds database schemas if not present
-    - Never overwrites or seeds user-managed admin data
+    - Automatically builds database schemas
+    - Seeds default resume data only if the database is newly initialized
     """
-    # Initialize database schemas
+    # 1. Initialize schemas
     init_db()
+
+    # 2. Seed defaults only if database is completely empty
+    db = SessionLocal()
+    try:
+        seed_portfolio_data(db, force=False)
+    finally:
+        db.close()
 
     yield
 
