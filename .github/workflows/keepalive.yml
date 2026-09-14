@@ -1,0 +1,15 @@
+name: Render Service Keep-Alive Pinger
+
+on:
+  schedule:
+    # Runs every 10 minutes to prevent Render free-tier cold starts
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Live Portfolio Health Endpoint
+        run: |
+          curl -s -f -m 20 https://vivek-jaiswal-portfolio.onrender.com/health || echo "Keepalive ping dispatched"

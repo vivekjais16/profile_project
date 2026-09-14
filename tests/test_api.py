@@ -284,6 +284,22 @@ def test_database_export(client):
     assert "attachment" in export_resp.headers.get("content-disposition", "")
 
 
+def test_admin_photo_upload(client):
+    """Verify admin photo upload functionality."""
+    login_data = {
+        "username": "vivekjais16",
+        "password": "VivekAdmin@2026",
+    }
+    login_resp = client.post("/admin/login", data=login_data, follow_redirects=False)
+    client.cookies.set("vj_admin_session", login_resp.cookies["vj_admin_session"])
+
+    # Upload test image
+    file_payload = {"photo_file": ("test_avatar.jpg", b"fake-jpg-binary-content", "image/jpeg")}
+    upload_resp = client.post("/admin/photo/upload", files=file_payload)
+    assert upload_resp.status_code == status.HTTP_200_OK
+    assert "Profile photo successfully uploaded" in upload_resp.text
+
+
 
 
 

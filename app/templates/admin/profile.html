@@ -26,6 +26,42 @@
     </div>
     {% endif %}
 
+    {% if photo_err %}
+    <div class="p-4 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2">
+        <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0"></i>
+        <span>{{ photo_err }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Profile Photo Upload & Preview Card -->
+    <div class="glass-panel rounded-2xl p-6 border-2 border-emerald-500/40 bg-gradient-to-br from-slate-900 via-emerald-950/20 to-slate-900 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-emerald-500/60 shrink-0 bg-slate-950">
+                    <img src="{{ profile.avatar_url or '/static/img/vivek_profile.jpg' }}" alt="Profile Photo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h2 class="font-bold text-base text-white flex items-center gap-2">
+                        <i data-lucide="image" class="w-5 h-5 text-emerald-400"></i> Profile Photo Management
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">
+                        Upload your latest executive photo / portrait. Displays in the Hero section and branding headers.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <form action="/admin/photo/upload" method="post" enctype="multipart/form-data" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end pt-2">
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-mono text-slate-300 mb-1.5">Select New Image (.jpg, .png, .webp) *</label>
+                <input type="file" name="photo_file" accept="image/png,image/jpeg,image/webp" required class="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
+            </div>
+            <button type="submit" class="px-5 py-2.5 rounded-xl font-semibold text-xs bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center justify-center gap-1.5 shadow-md">
+                <i data-lucide="upload" class="w-4 h-4"></i> Upload & Replace Photo
+            </button>
+        </form>
+    </div>
+
     <!-- Resume PDF Upload & Download Card -->
     <div class="glass-panel rounded-2xl p-6 border-2 border-indigo-500/40 bg-gradient-to-br from-slate-900 via-indigo-950/20 to-slate-900 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">

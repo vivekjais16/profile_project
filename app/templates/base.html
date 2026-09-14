@@ -57,10 +57,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <!-- Brand & Availability -->
             <a href="/" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-emerald-400 p-[1.5px] transition-transform group-hover:scale-105">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-emerald-400 p-[1.5px] transition-transform group-hover:scale-105 overflow-hidden">
+                    {% if profile.avatar_url %}
+                    <img src="{{ profile.avatar_url }}" alt="{{ profile.full_name }}" class="w-full h-full object-cover rounded-[9px]">
+                    {% else %}
                     <div class="w-full h-full bg-dark-950 rounded-[10px] flex items-center justify-center font-bold text-lg font-mono text-emerald-400">
                         VJ
                     </div>
+                    {% endif %}
                 </div>
                 <div>
                     <div class="font-bold text-base sm:text-lg tracking-tight text-white flex items-center gap-2">

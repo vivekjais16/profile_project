@@ -145,6 +145,8 @@ async def admin_profile_save(
     full_name: str = Form(...),
     headline: str = Form(...),
     sub_headline: str = Form(""),
+    avatar_url: str = Form("/static/img/vivek_profile.jpg"),
+    status_text: str = Form("Available for Senior / Lead Roles"),
     email: str = Form(...),
     phone: str = Form(...),
     location: str = Form(...),
@@ -163,6 +165,8 @@ async def admin_profile_save(
         profile.full_name = full_name
         profile.headline = headline
         profile.sub_headline = sub_headline
+        profile.avatar_url = avatar_url
+        profile.status_text = status_text
         profile.email = email
         profile.phone = phone
         profile.location = location
@@ -187,6 +191,61 @@ async def admin_profile_save(
             "metrics": metrics,
             "competencies": competencies,
             "msg": "Profile details updated successfully!",
+        },
+    )
+
+
+@admin_router.post("/photo/upload", response_class=HTMLResponse)
+async def admin_photo_upload(
+    request: Request,
+    photo_file: UploadFile = File(...),
+    admin_user: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    profile = PortfolioService.get_profile(db)
+    metrics = PortfolioService.get_metrics(db)
+    competencies = PortfolioService.get_core_competencies(db)
+
+    # Validate image extension
+    allowed_extensions = {".jpg", ".jpeg", ".png", ".webp"}
+    ext = Path(photo_file.filename).suffix.lower()
+    if ext not in allowed_extensions:
+        return templates.TemplateResponse(
+            request=request,
+            name="admin/profile.html",
+            context={
+                "admin_user": admin_user,
+                "profile": profile,
+                "metrics": metrics,
+                "competencies": competencies,
+                "msg": None,
+                "photo_err": "Only JPG, PNG, or WebP image formats are supported.",
+            },
+        )
+
+    img_dir = BASE_DIR / "app" / "static" / "img"
+    img_dir.mkdir(parents=True, exist_ok=True)
+    target_filename = f"vivek_profile{ext}"
+    target_path = img_dir / target_filename
+
+    # Save uploaded image
+    with open(target_path, "wb") as buffer:
+        shutil.copyfileobj(photo_file.file, buffer)
+
+    if profile:
+        profile.avatar_url = f"/static/img/{target_filename}"
+        db.commit()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="admin/profile.html",
+        context={
+            "admin_user": admin_user,
+            "profile": profile,
+            "metrics": metrics,
+            "competencies": competencies,
+            "msg": f"Profile photo successfully uploaded and live on portfolio!",
+            "photo_err": None,
         },
     )
 

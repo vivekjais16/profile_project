@@ -38,6 +38,7 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
         full_name="VIVEK JAISWAL",
         headline="The Backend & Autonomous Agentic AI Architect",
         sub_headline="Architecting resilient microservices, autonomous LLM agents (LangGraph), and high-throughput data platforms",
+        avatar_url="/static/img/vivek_profile.jpg",
         email="vivekjais16@gmail.com",
         phone="+91 8920171244",
         location="Varanasi – 221001, Uttar Pradesh, India",

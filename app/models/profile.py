@@ -27,6 +27,7 @@ class Profile(Base):
     years_of_experience = Column(Float, default=4.5)
     is_available = Column(Boolean, default=True)
     status_text = Column(String(150), default="Available for Senior / Lead Roles")
+    avatar_url = Column(String(255), default="/static/img/vivek_profile.jpg")
     resume_filename = Column(String(255), default="Vivek_Jaiswal_Resume.pdf")
     resume_updated_at = Column(String(50), default="Recently Uploaded")
     footer_tagline = Column(String(255), default="Engineered with FastAPI, SQLAlchemy 2.0 & Production Microservices. Designed for high throughput & reliability.")
