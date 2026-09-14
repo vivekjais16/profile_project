@@ -1,12 +1,15 @@
 """
 Direct Email Notification Service
 Sends automated email alerts to Vivek Jaiswal when recruiters submit inquiries.
+Includes IPv4 socket enforcement and automatic TLS/SSL fallback for cloud environments like Render.
 Author: Vivek Jaiswal <vivekjais16@gmail.com>
 Senior Software Engineer — Python | Django | FastAPI | Generative AI & Agentic AI
 """
 
+import socket
 import smtplib
 import logging
+import traceback
 from typing import Tuple, Dict, Any
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -14,8 +17,60 @@ from datetime import datetime
 from app.core.config import settings
 from app.core.database import SessionLocal
 from app.models.admin import SystemSetting
+from app.services.logger_service import log_event
 
 logger = logging.getLogger("portfolio.email")
+
+
+def _get_ipv4_smtp_server(host: str, port: int, timeout: int = 12):
+    """
+    Creates an SMTP connection with forced IPv4 resolution.
+    Fixes '[Errno 101] Network is unreachable' caused by IPv6 DNS resolution in cloud containers.
+    """
+    orig_getaddrinfo = socket.getaddrinfo
+
+    def forced_ipv4_getaddrinfo(h, p, family=0, sock_type=0, proto=0, flags=0):
+        return orig_getaddrinfo(h, p, socket.AF_INET, sock_type, proto, flags)
+
+    socket.getaddrinfo = forced_ipv4_getaddrinfo
+    try:
+        if port == 465:
+            server = smtplib.SMTP_SSL(host, port, timeout=timeout)
+        else:
+            server = smtplib.SMTP(host, port, timeout=timeout)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+        return server
+    finally:
+        socket.getaddrinfo = orig_getaddrinfo
+
+
+def _establish_smtp_connection(host: str, port: int, user: str, password: str, timeout: int = 12):
+    """
+    Attempts connection on specified port with automatic fallback between Port 587 (TLS) and Port 465 (SSL).
+    """
+    clean_password = password.replace(" ", "").strip()
+    errors = []
+
+    # Attempt 1: Requested port
+    try:
+        server = _get_ipv4_smtp_server(host, port, timeout=timeout)
+        server.login(user, clean_password)
+        return server, port, None
+    except Exception as e:
+        errors.append(f"Port {port}: {str(e)}")
+
+    # Attempt 2: Fallback port (switch 587 <-> 465)
+    fallback_port = 465 if port != 465 else 587
+    try:
+        server = _get_ipv4_smtp_server(host, fallback_port, timeout=timeout)
+        server.login(user, clean_password)
+        return server, fallback_port, None
+    except Exception as e:
+        errors.append(f"Fallback Port {fallback_port}: {str(e)}")
+
+    return None, port, " | ".join(errors)
 
 
 def get_effective_smtp_config() -> Dict[str, Any]:
@@ -85,19 +140,44 @@ def send_test_email(
     """
     msg.attach(MIMEText(body, "html"))
 
-    try:
-        if smtp_port == 465:
-            server = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=12)
-        else:
-            server = smtplib.SMTP(smtp_host, smtp_port, timeout=12)
-            server.starttls()
+    server, connected_port, error_msg = _establish_smtp_connection(
+        host=smtp_host,
+        port=smtp_port,
+        user=smtp_user,
+        password=clean_password,
+        timeout=15,
+    )
 
-        server.login(smtp_user, clean_password)
+    if not server:
+        err_detail = f"Failed connecting to {smtp_host} on port {smtp_port} & fallback. Details: {error_msg}"
+        log_event(
+            level="ERROR",
+            module="EMAIL",
+            action="SMTP Test Email Failed",
+            message=f"Could not connect to {smtp_host}: {error_msg}",
+            details=err_detail,
+        )
+        return False, f"SMTP Connection Failed: {error_msg}"
+
+    try:
         server.send_message(msg)
         server.quit()
-        return True, f"Test email successfully sent to {recipient}! Please check your Gmail inbox."
+        log_event(
+            level="SUCCESS",
+            module="EMAIL",
+            action="SMTP Test Email Dispatched",
+            message=f"Test email successfully sent to {recipient} via port {connected_port}",
+        )
+        return True, f"Test email successfully delivered to {recipient} (via Port {connected_port})! Check your inbox."
     except Exception as exc:
-        return False, f"SMTP Connection Failed: {str(exc)}"
+        log_event(
+            level="ERROR",
+            module="EMAIL",
+            action="SMTP Send Error",
+            message=f"Error sending message payload: {str(exc)}",
+            details=traceback.format_exc(),
+        )
+        return False, f"Failed to send test email payload: {str(exc)}"
 
 
 def send_contact_email_notification(
@@ -114,9 +194,11 @@ def send_contact_email_notification(
     smtp_password = cfg["smtp_password"].replace(" ", "").strip() if cfg["smtp_password"] else ""
 
     if not smtp_password:
-        logger.info(
-            f"SMTP not configured (SMTP_PASSWORD empty). Message from '{sender_name}' ({sender_email}) "
-            f"was safely saved to SQLite database."
+        log_event(
+            level="WARNING",
+            module="EMAIL",
+            action="Email Notification Skipped",
+            message=f"Inquiry from '{sender_name}' ({sender_email}) saved to DB, but SMTP_PASSWORD is not set.",
         )
         return False
 
@@ -194,18 +276,40 @@ You can reply directly to this email to reach {sender_name}.
     msg.attach(MIMEText(text_content, "plain"))
     msg.attach(MIMEText(html_content, "html"))
 
-    try:
-        if smtp_port == 465:
-            server = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10)
-        else:
-            server = smtplib.SMTP(smtp_host, smtp_port, timeout=10)
-            server.starttls()
+    server, connected_port, error_msg = _establish_smtp_connection(
+        host=smtp_host,
+        port=smtp_port,
+        user=smtp_user,
+        password=smtp_password,
+        timeout=15,
+    )
 
-        server.login(smtp_user, smtp_password)
+    if not server:
+        log_event(
+            level="ERROR",
+            module="EMAIL",
+            action="Inquiry Email Dispatch Failed",
+            message=f"Could not connect to SMTP server: {error_msg}",
+            details=f"Sender: {sender_name} <{sender_email}>\nSubject: {subject}\nError: {error_msg}",
+        )
+        return False
+
+    try:
         server.send_message(msg)
         server.quit()
-        logger.info(f"✓ Direct email alert dispatched to {recipient} for message from {sender_name}")
+        log_event(
+            level="SUCCESS",
+            module="EMAIL",
+            action="Inquiry Email Delivered",
+            message=f"Forwarded inquiry from '{sender_name}' ({sender_email}) to {recipient} via port {connected_port}",
+        )
         return True
     except Exception as exc:
-        logger.error(f"Failed to dispatch email alert: {exc}")
+        log_event(
+            level="ERROR",
+            module="EMAIL",
+            action="Inquiry Email Send Error",
+            message=f"Error sending inquiry email: {str(exc)}",
+            details=traceback.format_exc(),
+        )
         return False

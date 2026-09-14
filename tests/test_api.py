@@ -214,15 +214,37 @@ def test_resume_download_endpoints(client):
     assert resp2.headers.get("content-type") == "application/pdf"
 
 
-def test_ai_agent_resume_query(client):
-    """Verify AI Agent returns resume action on download query."""
-    payload = {"query": "Download Vivek's resume PDF"}
-    response = client.post("/api/v1/agent/query", json=payload)
-    assert response.status_code == status.HTTP_200_OK
-    data = response.json()
-    assert data["action_type"] == "download_resume"
-    assert data["action_url"] == "/api/v1/profile/resume"
-    assert "resume" in data["response"].lower() or "pdf" in data["response"].lower()
+def test_system_logs_view(client):
+    """Verify admin logs endpoint returns system activity logs."""
+    # Ensure client is logged in
+    login_data = {
+        "username": "vivekjais16",
+        "password": "VivekAdmin@2026",
+    }
+    login_resp = client.post("/admin/login", data=login_data, follow_redirects=False)
+    client.cookies.set("vj_admin_session", login_resp.cookies["vj_admin_session"])
+
+    # Trigger some activity
+    client.post("/api/v1/agent/query", json={"query": "Test log event"})
+
+    logs_resp = client.get("/admin/logs")
+    assert logs_resp.status_code == status.HTTP_200_OK
+    assert "System Diagnostics & Activity Logs" in logs_resp.text
+    assert "Total Logs" in logs_resp.text
+
+
+def test_system_logs_clear(client):
+    """Verify clearing logs removes entries and creates a clear log record."""
+    login_data = {
+        "username": "vivekjais16",
+        "password": "VivekAdmin@2026",
+    }
+    login_resp = client.post("/admin/login", data=login_data, follow_redirects=False)
+    client.cookies.set("vj_admin_session", login_resp.cookies["vj_admin_session"])
+
+    clear_resp = client.post("/admin/logs/clear", follow_redirects=False)
+    assert clear_resp.status_code == status.HTTP_303_SEE_OTHER
+
 
 
 

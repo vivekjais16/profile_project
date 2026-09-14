@@ -22,10 +22,11 @@ from app.models.skill import SkillCategory, Skill
 from app.models.project import Project
 from app.models.education import Education, Achievement, SoftSkill
 from app.models.contact import ContactMessage, AIAgentQuery
-from app.models.admin import AdminUser, SystemSetting, hash_password
+from app.models.admin import AdminUser, SystemSetting, SystemLog, hash_password
 from app.services.portfolio_service import PortfolioService
 from app.services.seeder_service import seed_portfolio_data
 from app.services.email_service import get_effective_smtp_config, send_test_email
+from app.services.logger_service import get_system_logs, get_log_stats, clear_all_logs, log_event
 from app.admin.auth import (
     generate_session_token,
     get_current_admin,
@@ -918,5 +919,42 @@ async def admin_reseed_database(
     db: Session = Depends(get_db),
 ):
     seed_portfolio_data(db, force=True)
+    log_event("WARNING", "ADMIN", "Database Reseeded", "Admin reseeded portfolio data.")
     return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
+
+
+# -----------------------------------------------------------------------------
+# System Diagnostics & Logs
+# -----------------------------------------------------------------------------
+@admin_router.get("/logs", response_class=HTMLResponse)
+async def admin_logs_view(
+    request: Request,
+    level: Optional[str] = "ALL",
+    module: Optional[str] = "ALL",
+    admin_user: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    logs = get_system_logs(limit=150, level=level, module=module)
+    stats = get_log_stats()
+    return templates.TemplateResponse(
+        request=request,
+        name="admin/logs.html",
+        context={
+            "admin_user": admin_user,
+            "logs": logs,
+            "stats": stats,
+            "selected_level": level or "ALL",
+            "selected_module": module or "ALL",
+        },
+    )
+
+
+@admin_router.post("/logs/clear")
+async def admin_logs_clear(
+    admin_user: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    clear_all_logs()
+    return RedirectResponse(url="/admin/logs", status_code=status.HTTP_303_SEE_OTHER)
+
 

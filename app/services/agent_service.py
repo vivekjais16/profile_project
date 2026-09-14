@@ -188,6 +188,15 @@ class PortfolioAgentService:
         db.add(log_entry)
         db.commit()
 
+        from app.services.logger_service import log_event
+        log_event(
+            level="INFO",
+            module="AI_AGENT",
+            action="Agent Query Processed",
+            message=f"Query: '{user_query}' → Intent: '{intent}'",
+            details=f"Response:\n{response_text}",
+        )
+
         return {
             "query": user_query,
             "response": response_text,

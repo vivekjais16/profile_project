@@ -27,6 +27,16 @@ def submit_contact_message(
     client_ip = request.client.host if request.client else None
     msg = PortfolioService.save_contact_message(db, message_in, ip_address=client_ip)
 
+    from app.services.logger_service import log_event
+    log_event(
+        level="SUCCESS",
+        module="CONTACT",
+        action="Inquiry Received",
+        message=f"Received message from '{message_in.sender_name}' <{message_in.sender_email}>: '{message_in.subject}'",
+        details=f"IP: {client_ip}\nMessage Content:\n{message_in.message}",
+        ip_address=client_ip,
+    )
+
     # Queue direct email alert to Vivek Jaiswal
     background_tasks.add_task(
         send_contact_email_notification,

@@ -46,3 +46,18 @@ class SystemSetting(Base):
     value = Column(String(500), nullable=True)
     description = Column(String(255), nullable=True)
 
+
+class SystemLog(Base):
+    """System diagnostic log entries stored in SQLite."""
+    __tablename__ = "system_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime, default=utc_now, index=True)
+    level = Column(String(20), default="INFO", index=True)  # INFO, WARNING, ERROR, SUCCESS
+    module = Column(String(50), default="SYSTEM", index=True)  # EMAIL, CONTACT, AI_AGENT, AUTH, ADMIN, DATABASE
+    action = Column(String(100), nullable=False)
+    message = Column(String(500), nullable=False)
+    details = Column(String(5000), nullable=True)
+    ip_address = Column(String(50), nullable=True)
+
+
