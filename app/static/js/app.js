@@ -191,7 +191,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     showToast(resData.message, "success");
                     contactForm.reset();
                 } else {
-                    const detailMsg = resData.detail ? JSON.stringify(resData.detail) : "Submission failed.";
+                    let detailMsg = "Please verify your input.";
+                    if (Array.isArray(resData.detail)) {
+                        detailMsg = resData.detail.map(err => {
+                            const rawField = err.loc ? err.loc[err.loc.length - 1] : 'field';
+                            const fieldName = rawField.replace('sender_', '').replace('_', ' ');
+                            return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}: ${err.msg}`;
+                        }).join(" • ");
+                    } else if (typeof resData.detail === 'string') {
+                        detailMsg = resData.detail;
+                    }
                     showToast(detailMsg, "error");
                 }
             } catch (err) {

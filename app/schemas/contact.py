@@ -13,8 +13,8 @@ class ContactMessageCreate(BaseModel):
     """Schema for incoming contact message form."""
     sender_name: str = Field(..., min_length=2, max_length=120, description="Your full name")
     sender_email: EmailStr = Field(..., description="Your active email address")
-    subject: str = Field(..., min_length=3, max_length=200, description="Subject of your message")
-    message: str = Field(..., min_length=10, max_length=5000, description="Detailed message or inquiry")
+    subject: str = Field(..., min_length=2, max_length=200, description="Subject of your message")
+    message: str = Field(..., min_length=3, max_length=5000, description="Detailed message or inquiry")
 
 
 class ContactMessageRead(BaseModel):
