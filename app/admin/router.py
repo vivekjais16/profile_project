@@ -153,6 +153,7 @@ async def admin_profile_save(
     profile_summary_1: str = Form(...),
     profile_summary_2: str = Form(...),
     years_of_experience: float = Form(4.5),
+    footer_tagline: str = Form("Engineered with FastAPI, SQLAlchemy 2.0 & SQLite. Designed for high throughput & reliability."),
     admin_user: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ):
@@ -170,6 +171,7 @@ async def admin_profile_save(
         profile.profile_summary_1 = profile_summary_1
         profile.profile_summary_2 = profile_summary_2
         profile.years_of_experience = years_of_experience
+        profile.footer_tagline = footer_tagline
         db.commit()
 
     metrics = PortfolioService.get_metrics(db)

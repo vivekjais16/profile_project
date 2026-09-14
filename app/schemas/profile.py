@@ -26,6 +26,8 @@ class ProfileRead(BaseModel):
     status_text: str
     resume_filename: Optional[str] = "Vivek_Jaiswal_Resume.pdf"
     resume_updated_at: Optional[str] = "Recently Uploaded"
+    footer_tagline: Optional[str] = "Engineered with FastAPI, SQLAlchemy 2.0 & SQLite. Designed for high throughput & reliability."
+
 
     model_config = ConfigDict(from_attributes=True)
 

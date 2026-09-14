@@ -130,7 +130,7 @@
                     <span class="text-xs text-slate-500 font-mono">Senior Software Engineer</span>
                 </div>
                 <p class="text-xs text-slate-400 text-center md:text-left">
-                    Engineered with FastAPI, SQLAlchemy 2.0 & SQLite. Designed for high throughput & reliability.
+                    {{ profile.footer_tagline if profile and profile.footer_tagline else 'Engineered with FastAPI, SQLAlchemy 2.0 & SQLite. Designed for high throughput & reliability.' }}
                 </p>
             </div>
 
@@ -150,7 +150,7 @@
             </div>
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-800/60 text-center text-xs text-slate-400">
-            &copy; 2026 Vivek Jaiswal. All rights reserved. • Location: {{ profile.location }}
+            &copy; 2026 {{ profile.full_name if profile else 'Vivek Jaiswal' }}. All rights reserved.
         </div>
     </footer>
 

@@ -175,6 +175,7 @@ def test_admin_login_flow(client):
         "profile_summary_1": "Experienced backend developer",
         "profile_summary_2": "Specialized in Python & LangGraph",
         "years_of_experience": 4.5,
+        "footer_tagline": "Custom engineered dynamic footer",
     }
     p_resp = client.post("/admin/profile", data=profile_data)
     assert p_resp.status_code == status.HTTP_200_OK
