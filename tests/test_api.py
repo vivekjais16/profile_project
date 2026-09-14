@@ -4,6 +4,7 @@ Author: Vivek Jaiswal <vivekjais16@gmail.com>
 Senior Software Engineer — Python | Django | FastAPI | Generative AI & Agentic AI
 """
 
+from pathlib import Path
 from fastapi import status
 
 
@@ -293,11 +294,19 @@ def test_admin_photo_upload(client):
     login_resp = client.post("/admin/login", data=login_data, follow_redirects=False)
     client.cookies.set("vj_admin_session", login_resp.cookies["vj_admin_session"])
 
-    # Upload test image
-    file_payload = {"photo_file": ("test_avatar.jpg", b"fake-jpg-binary-content", "image/jpeg")}
-    upload_resp = client.post("/admin/photo/upload", files=file_payload)
-    assert upload_resp.status_code == status.HTTP_200_OK
-    assert "Profile photo successfully uploaded" in upload_resp.text
+    img_path = Path("app/static/img/vivek_profile.jpg")
+    backup_data = img_path.read_bytes() if img_path.exists() else None
+
+    try:
+        # Upload test image
+        file_payload = {"photo_file": ("test_avatar.jpg", b"fake-jpg-binary-content", "image/jpeg")}
+        upload_resp = client.post("/admin/photo/upload", files=file_payload)
+        assert upload_resp.status_code == status.HTTP_200_OK
+        assert "Profile photo successfully uploaded" in upload_resp.text
+    finally:
+        if backup_data is not None:
+            img_path.write_bytes(backup_data)
+
 
 
 
