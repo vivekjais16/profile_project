@@ -8,7 +8,7 @@ import json
 import logging
 from datetime import datetime
 from typing import Any
-from ..config.settings import settings
+from config.settings import settings
 
 logger = logging.getLogger("SparkSinkManager")
 

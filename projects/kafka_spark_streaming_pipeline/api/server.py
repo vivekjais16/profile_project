@@ -10,8 +10,8 @@ from typing import Dict, Any, List
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from ..config.settings import settings
-from ..producer.generator import generate_synthetic_event
+from config.settings import settings
+from producer.generator import generate_synthetic_event
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

@@ -8,7 +8,7 @@ import random
 import uuid
 from datetime import datetime, timezone
 from typing import Generator
-from ..config.schemas import FinancialEvent, TransactionType, TransactionStatus
+from config.schemas import FinancialEvent, TransactionType, TransactionStatus
 
 ACCOUNT_POOL = [f"ACC-{i:05d}" for i in range(1, 500)]
 MERCHANT_CATEGORIES = [

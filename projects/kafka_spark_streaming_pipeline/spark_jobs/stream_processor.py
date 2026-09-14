@@ -5,7 +5,7 @@ Senior Software Engineer — Python | Django | FastAPI | Generative AI & Agentic
 """
 
 import logging
-from ..config.settings import settings
+from config.settings import settings
 from .sinks import write_batch_multi_sink
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] (%(name)s) %(message)s")

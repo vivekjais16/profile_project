@@ -9,8 +9,8 @@ import json
 import logging
 import time
 from typing import Optional
-from ..config.settings import settings
-from ..config.schemas import FinancialEvent
+from config.settings import settings
+from config.schemas import FinancialEvent
 from .generator import generate_synthetic_event
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] (%(name)s) %(message)s")
