@@ -68,7 +68,7 @@
                 <label class="block text-xs font-mono text-slate-300 mb-1">
                     Google 16-Character App Password *
                     {% if smtp_cfg.smtp_password %}
-                    <span class="text-emerald-400 ml-2 font-normal">(Password is saved in SQLite)</span>
+                    <span class="text-emerald-400 ml-2 font-normal">(Password is securely saved)</span>
                     {% endif %}
                 </label>
                 <input type="password" name="smtp_password" placeholder="e.g. abcd efgh ijkl mnop (paste 16 characters)" value="{{ smtp_cfg.smtp_password }}" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500">

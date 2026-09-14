@@ -42,7 +42,7 @@
                     <span>Admin Control Center</span>
                 </a>
                 <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-500/30">
-                    SQLite DB Active
+                    Production Database Active
                 </span>
             </div>
 
@@ -106,7 +106,7 @@
                 <i data-lucide="shield-check" class="w-4 h-4 text-purple-400"></i> Admin Credentials
             </a>
 
-            <form action="/admin/reseed" method="post" onsubmit="return confirm('Re-seed SQLite database with resume defaults? Any custom manual records will be restored to resume state.');" class="pt-2">
+            <form action="/admin/reseed" method="post" onsubmit="return confirm('Restore database with resume defaults? Any custom manual records will be restored to resume state.');" class="pt-2">
                 <button type="submit" class="w-full text-left flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-mono text-slate-400 hover:text-rose-400 hover:bg-rose-950/30 transition">
                     <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Restore Resume DB
                 </button>

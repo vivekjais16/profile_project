@@ -59,7 +59,7 @@ def init_db() -> None:
                 if "resume_updated_at" not in columns:
                     conn.exec_driver_sql("ALTER TABLE profiles ADD COLUMN resume_updated_at VARCHAR(50) DEFAULT 'Recently Uploaded'")
                 if "footer_tagline" not in columns:
-                    conn.exec_driver_sql("ALTER TABLE profiles ADD COLUMN footer_tagline VARCHAR(255) DEFAULT 'Engineered with FastAPI, SQLAlchemy 2.0 & SQLite. Designed for high throughput & reliability.'")
+                    conn.exec_driver_sql("ALTER TABLE profiles ADD COLUMN footer_tagline VARCHAR(255) DEFAULT 'Engineered with FastAPI, SQLAlchemy 2.0 & Production Microservices. Designed for high throughput & reliability.'")
                 conn.commit()
         except Exception:
             pass

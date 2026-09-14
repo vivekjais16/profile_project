@@ -29,7 +29,8 @@ class Profile(Base):
     status_text = Column(String(150), default="Available for Senior / Lead Roles")
     resume_filename = Column(String(255), default="Vivek_Jaiswal_Resume.pdf")
     resume_updated_at = Column(String(50), default="Recently Uploaded")
-    footer_tagline = Column(String(255), default="Engineered with FastAPI, SQLAlchemy 2.0 & SQLite. Designed for high throughput & reliability.")
+    footer_tagline = Column(String(255), default="Engineered with FastAPI, SQLAlchemy 2.0 & Production Microservices. Designed for high throughput & reliability.")
+
 
 
 
