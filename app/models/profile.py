@@ -27,6 +27,9 @@ class Profile(Base):
     years_of_experience = Column(Float, default=4.5)
     is_available = Column(Boolean, default=True)
     status_text = Column(String(150), default="Available for Senior / Lead Roles")
+    resume_filename = Column(String(255), default="Vivek_Jaiswal_Resume.pdf")
+    resume_updated_at = Column(String(50), default="Recently Uploaded")
+
 
 
 class CoreCompetency(Base):

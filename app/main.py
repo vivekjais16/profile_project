@@ -95,7 +95,32 @@ async def render_portfolio(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse(request=request, name="index.html", context=context)
 
 
+@app.get("/resume", tags=["Resume"])
+@app.get("/download-resume", tags=["Resume"])
+async def download_resume_direct(db: Session = Depends(get_db)):
+    """Direct route to download Vivek Jaiswal's authentic resume PDF."""
+    from fastapi.responses import FileResponse
+    profile = PortfolioService.get_profile(db)
+    filename = profile.resume_filename if (profile and profile.resume_filename) else "Vivek_Jaiswal_Resume.pdf"
+    file_path = BASE_DIR / "app" / "static" / "resume" / filename
+
+    if not file_path.exists():
+        fallback = BASE_DIR / "app" / "static" / "resume" / "Vivek_Jaiswal_Resume.pdf"
+        if fallback.exists():
+            file_path = fallback
+        else:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resume file not found")
+
+    return FileResponse(
+        path=str(file_path),
+        filename="Vivek_Jaiswal_Resume.pdf",
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="Vivek_Jaiswal_Resume.pdf"'},
+    )
+
+
 @app.get("/health", tags=["System Health & Diagnostics"])
 async def root_health():
     """Quick root health check."""
     return {"status": "healthy", "service": "Vivek Jaiswal Portfolio Platform"}
+

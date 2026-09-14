@@ -199,3 +199,29 @@ def test_admin_login_flow(client):
     assert "Test AI Agent System" in proj_view.text
 
 
+def test_resume_download_endpoints(client):
+    """Verify resume download via API and direct alias."""
+    # Test /api/v1/profile/resume
+    resp1 = client.get("/api/v1/profile/resume")
+    assert resp1.status_code == status.HTTP_200_OK
+    assert resp1.headers.get("content-type") == "application/pdf"
+    assert "attachment" in resp1.headers.get("content-disposition", "")
+
+    # Test /download-resume direct route
+    resp2 = client.get("/download-resume")
+    assert resp2.status_code == status.HTTP_200_OK
+    assert resp2.headers.get("content-type") == "application/pdf"
+
+
+def test_ai_agent_resume_query(client):
+    """Verify AI Agent returns resume action on download query."""
+    payload = {"query": "Download Vivek's resume PDF"}
+    response = client.post("/api/v1/agent/query", json=payload)
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert data["action_type"] == "download_resume"
+    assert data["action_url"] == "/api/v1/profile/resume"
+    assert "resume" in data["response"].lower() or "pdf" in data["response"].lower()
+
+
+

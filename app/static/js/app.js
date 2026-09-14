@@ -98,6 +98,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
             }
 
+            let actionCardHtml = "";
+            if (data.action_type === "download_resume" || data.action_url) {
+                const downloadUrl = data.action_url || "/api/v1/profile/resume";
+                actionCardHtml = `
+                    <div class="p-3.5 mt-2 rounded-xl bg-gradient-to-r from-emerald-950/80 to-slate-900 border border-emerald-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            </div>
+                            <div>
+                                <div class="font-bold text-white text-xs">${data.download_filename || 'Vivek_Jaiswal_Resume.pdf'}</div>
+                                <div class="text-[10px] text-slate-400">Official Executive CV • 4.5+ Yrs Python, FastAPI & AI Systems</div>
+                            </div>
+                        </div>
+                        <a href="${downloadUrl}" download="Vivek_Jaiswal_Resume.pdf" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5 whitespace-nowrap">
+                            <span>⬇️ Download PDF</span>
+                        </a>
+                    </div>
+                `;
+
+                // Automatically trigger download
+                setTimeout(() => {
+                    const downloadLink = document.createElement("a");
+                    downloadLink.href = downloadUrl;
+                    downloadLink.download = data.download_filename || "Vivek_Jaiswal_Resume.pdf";
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                }, 300);
+            }
+
             terminalOutput.innerHTML = `
                 <div class="space-y-3 font-mono text-sm animate-fade-in">
                     <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-2">
@@ -109,6 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="text-slate-200 leading-relaxed">
                         ${data.response}
                     </div>
+                    ${actionCardHtml}
                     ${skillsBadges ? `<div class="flex flex-wrap gap-1.5 items-center pt-1"><span class="text-xs text-slate-400">Related Stack:</span> ${skillsBadges}</div>` : ""}
                     ${followupHtml}
                 </div>

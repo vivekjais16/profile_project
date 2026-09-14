@@ -19,3 +19,7 @@ class AIAgentQueryResponse(BaseModel):
     related_skills: List[str] = []
     confidence: float = 0.98
     suggested_followups: List[str] = []
+    action_type: Optional[str] = None
+    action_url: Optional[str] = None
+    download_filename: Optional[str] = None
+

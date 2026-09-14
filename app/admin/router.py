@@ -5,10 +5,12 @@ Author: Vivek Jaiswal <vivekjais16@gmail.com>
 Senior Software Engineer — Python | Django | FastAPI | Generative AI & Agentic AI
 """
 
+from datetime import datetime
 from typing import Optional, List
 from pathlib import Path
-from fastapi import APIRouter, Request, Depends, Form, HTTPException, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+import shutil
+from fastapi import APIRouter, Request, Depends, Form, File, UploadFile, HTTPException, status
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
@@ -183,6 +185,84 @@ async def admin_profile_save(
             "msg": "Profile details updated successfully!",
         },
     )
+
+
+@admin_router.post("/resume/upload", response_class=HTMLResponse)
+async def admin_resume_upload(
+    request: Request,
+    resume_file: UploadFile = File(...),
+    admin_user: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    profile = PortfolioService.get_profile(db)
+    metrics = PortfolioService.get_metrics(db)
+    competencies = PortfolioService.get_core_competencies(db)
+
+    # Validate file format
+    if not resume_file.filename.lower().endswith(".pdf"):
+        return templates.TemplateResponse(
+            request=request,
+            name="admin/profile.html",
+            context={
+                "admin_user": admin_user,
+                "profile": profile,
+                "metrics": metrics,
+                "competencies": competencies,
+                "msg": None,
+                "resume_err": "Only PDF files (.pdf) are allowed.",
+            },
+        )
+
+    resume_dir = BASE_DIR / "app" / "static" / "resume"
+    resume_dir.mkdir(parents=True, exist_ok=True)
+    target_path = resume_dir / "Vivek_Jaiswal_Resume.pdf"
+
+    # Save uploaded file
+    with open(target_path, "wb") as buffer:
+        shutil.copyfileobj(resume_file.file, buffer)
+
+    if profile:
+        profile.resume_filename = "Vivek_Jaiswal_Resume.pdf"
+        profile.resume_updated_at = datetime.now().strftime("%b %d, %Y - %I:%M %p")
+        db.commit()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="admin/profile.html",
+        context={
+            "admin_user": admin_user,
+            "profile": profile,
+            "metrics": metrics,
+            "competencies": competencies,
+            "msg": f"Resume PDF successfully uploaded ({resume_file.filename}) and active on portfolio!",
+            "resume_err": None,
+        },
+    )
+
+
+@admin_router.get("/resume/download")
+async def admin_resume_download(
+    admin_user: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    profile = PortfolioService.get_profile(db)
+    filename = profile.resume_filename if (profile and profile.resume_filename) else "Vivek_Jaiswal_Resume.pdf"
+    file_path = BASE_DIR / "app" / "static" / "resume" / filename
+
+    if not file_path.exists():
+        fallback = BASE_DIR / "app" / "static" / "resume" / "Vivek_Jaiswal_Resume.pdf"
+        if fallback.exists():
+            file_path = fallback
+        else:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No resume uploaded yet.")
+
+    return FileResponse(
+        path=str(file_path),
+        filename="Vivek_Jaiswal_Resume.pdf",
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="Vivek_Jaiswal_Resume.pdf"'},
+    )
+
 
 
 @admin_router.post("/metrics/edit/{metric_id}")

@@ -24,6 +24,8 @@ class ProfileRead(BaseModel):
     years_of_experience: float
     is_available: bool
     status_text: str
+    resume_filename: Optional[str] = "Vivek_Jaiswal_Resume.pdf"
+    resume_updated_at: Optional[str] = "Recently Uploaded"
 
     model_config = ConfigDict(from_attributes=True)
 

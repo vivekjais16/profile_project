@@ -45,5 +45,20 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def init_db() -> None:
-    """Initialize database schemas."""
+    """Initialize database schemas and perform auto-migration for newly added SQLite columns."""
     Base.metadata.create_all(bind=engine)
+
+    with engine.connect() as conn:
+        try:
+            # Check profiles table columns
+            result = conn.exec_driver_sql("PRAGMA table_info(profiles)")
+            columns = [row[1] for row in result.fetchall()]
+            if columns:
+                if "resume_filename" not in columns:
+                    conn.exec_driver_sql("ALTER TABLE profiles ADD COLUMN resume_filename VARCHAR(255) DEFAULT 'Vivek_Jaiswal_Resume.pdf'")
+                if "resume_updated_at" not in columns:
+                    conn.exec_driver_sql("ALTER TABLE profiles ADD COLUMN resume_updated_at VARCHAR(50) DEFAULT 'Recently Uploaded'")
+                conn.commit()
+        except Exception:
+            pass
+
