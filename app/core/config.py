@@ -39,6 +39,19 @@ class Settings(BaseSettings):
     AUTHOR_LOCATION: str = "Varanasi – 221001, Uttar Pradesh, India"
     AUTHOR_GITHUB: str = "https://github.com/vivekjais16"
 
+    # Admin Panel Credentials & Session
+    ADMIN_USERNAME: str = "vivekjais16"
+    ADMIN_PASSWORD: str = "VivekAdmin@2026"
+    ADMIN_SESSION_COOKIE: str = "vj_admin_session"
+
+    # SMTP Direct Email Notification Settings
+    SMTP_ENABLED: bool = False
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USER: str = "vivekjais16@gmail.com"
+    SMTP_PASSWORD: str = ""
+    NOTIFICATION_EMAIL: str = "vivekjais16@gmail.com"
+
     model_config = SettingsConfigDict(
         case_sensitive=True,
         env_file=".env",

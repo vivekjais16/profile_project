@@ -10,6 +10,7 @@ from app.models.skill import SkillCategory, Skill
 from app.models.project import Project
 from app.models.education import Education, Achievement, SoftSkill
 from app.models.contact import ContactMessage, AIAgentQuery
+from app.models.admin import AdminUser, hash_password
 
 __all__ = [
     "Profile",
@@ -25,4 +26,6 @@ __all__ = [
     "SoftSkill",
     "ContactMessage",
     "AIAgentQuery",
+    "AdminUser",
+    "hash_password",
 ]

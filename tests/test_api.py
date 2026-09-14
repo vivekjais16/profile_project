@@ -132,3 +132,28 @@ def test_ai_agent_query(client):
     assert "Innefu Labs" in data["response"]
     assert "LangGraph" in data["matched_intent"] or "Agentic AI" in data["matched_intent"]
     assert len(data["related_skills"]) > 0
+
+
+def test_admin_unauthorized_redirect(client):
+    """Verify unauthenticated access to /admin redirects to login."""
+    response = client.get("/admin", follow_redirects=False)
+    assert response.status_code in [status.HTTP_307_TEMPORARY_REDIRECT, status.HTTP_302_FOUND]
+    assert "/admin/login" in response.headers.get("location", "")
+
+
+def test_admin_login_flow(client):
+    """Verify successful admin login and dashboard access."""
+    # Test valid credentials
+    login_data = {
+        "username": "vivekjais16",
+        "password": "VivekAdmin@2026",
+    }
+    response = client.post("/admin/login", data=login_data, follow_redirects=False)
+    assert response.status_code == status.HTTP_303_SEE_OTHER
+    assert "vj_admin_session" in response.cookies
+
+    # Test accessing protected dashboard with session cookie
+    dash_response = client.get("/admin", cookies=response.cookies)
+    assert dash_response.status_code == status.HTTP_200_OK
+    assert "System & Database Overview" in dash_response.text
+

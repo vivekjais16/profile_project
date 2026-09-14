@@ -1,0 +1,97 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Manage Experiences{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+            <h1 class="text-2xl font-bold text-white tracking-tight">Work History & Experiences</h1>
+            <p class="text-xs text-slate-400 mt-0.5">Add or remove career roles from your SQLite database</p>
+        </div>
+    </div>
+
+    <!-- Add Experience Form -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+        <h2 class="font-bold text-sm text-white flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-cyan-400"></i> Add New Work Experience
+        </h2>
+
+        <form action="/admin/experiences/add" method="post" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Company Name *</label>
+                    <input type="text" name="company_name" required placeholder="e.g. Innefu Labs" class="w-full px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Designation / Role *</label>
+                    <input type="text" name="designation" required placeholder="e.g. Lead Backend Engineer" class="w-full px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Start Date *</label>
+                    <input type="text" name="start_date" required placeholder="Jan'26" class="w-full px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">End Date *</label>
+                    <input type="text" name="end_date" required placeholder="Present" class="w-full px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Location *</label>
+                    <input type="text" name="location" required placeholder="New Delhi, India" class="w-full px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Parent Group (Optional)</label>
+                    <input type="text" name="parent_group" placeholder="e.g. Group of Shyam Steel" class="w-full px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Tech Stack Summary</label>
+                    <input type="text" name="tech_stack_summary" placeholder="Python, FastAPI, Kafka, Redis, Docker" class="w-full px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+            </div>
+
+            <button type="submit" class="px-5 py-2.5 rounded-xl font-semibold text-xs bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1.5">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Experience
+            </button>
+        </form>
+    </div>
+
+    <!-- Experiences Table -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+        <h2 class="font-bold text-sm text-white">Current Work Experiences ({{ experiences|length }})</h2>
+
+        <div class="space-y-4">
+            {% for exp in experiences %}
+            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-start justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-white text-sm">{{ exp.designation }}</span>
+                        <span class="text-xs text-indigo-400 font-medium">@ {{ exp.company_name }}</span>
+                        {% if exp.is_current %}
+                        <span class="px-2 py-0.2 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-500/30">CURRENT</span>
+                        {% endif %}
+                    </div>
+                    <div class="text-xs text-slate-400 font-mono">{{ exp.start_date }} – {{ exp.end_date }} • {{ exp.location }}</div>
+                    {% if exp.tech_stack_summary %}
+                    <div class="text-xs text-slate-500 pt-1">Tech: {{ exp.tech_stack_summary }}</div>
+                    {% endif %}
+                </div>
+
+                <form action="/admin/experiences/delete/{{ exp.id }}" method="post" onsubmit="return confirm('Delete this role?');">
+                    <button type="submit" class="p-2 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-500/30 transition">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

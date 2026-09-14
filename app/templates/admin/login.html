@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login — Vivek Jaiswal Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-dark-950 text-slate-100 min-h-screen flex items-center justify-center p-4 cyber-grid">
+
+    <div class="w-full max-w-md glass-panel rounded-2xl p-8 border border-slate-800 shadow-2xl space-y-6">
+        <div class="text-center space-y-2">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 mx-auto flex items-center justify-center font-bold text-xl font-mono">
+                VJ
+            </div>
+            <h1 class="text-2xl font-bold text-white tracking-tight">Portfolio Admin Panel</h1>
+            <p class="text-xs text-slate-400">Authenticate to manage SQLite database & system settings</p>
+        </div>
+
+        {% if error %}
+        <div class="p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2">
+            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form action="/admin/login" method="post" class="space-y-4">
+            <div>
+                <label for="username" class="block text-xs font-mono text-slate-300 mb-1.5">Admin Username</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                    </span>
+                    <input type="text" id="username" name="username" required placeholder="vivekjais16" class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <div>
+                <label for="password" class="block text-xs font-mono text-slate-300 mb-1.5">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                    </span>
+                    <input type="password" id="password" name="password" required placeholder="••••••••••••" class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 rounded-xl font-semibold text-sm bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2">
+                <i data-lucide="log-in" class="w-4 h-4"></i> Sign In to Dashboard
+            </button>
+        </form>
+
+        <div class="pt-4 border-t border-slate-800 text-center text-xs text-slate-500">
+            <a href="/" class="hover:text-slate-300 transition flex items-center justify-center gap-1">
+                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Public Portfolio
+            </a>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

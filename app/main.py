@@ -18,6 +18,7 @@ from app.core.database import init_db, SessionLocal, get_db
 from app.services.seeder_service import seed_portfolio_data
 from app.services.portfolio_service import PortfolioService
 from app.api.v1.router import api_router
+from app.admin.router import admin_router
 
 
 @asynccontextmanager
@@ -80,8 +81,9 @@ templates_dir = BASE_DIR / "app" / "templates"
 templates_dir.mkdir(parents=True, exist_ok=True)
 templates = Jinja2Templates(directory=str(templates_dir))
 
-# Include API v1 routes
+# Include API v1 routes and Web Admin Panel
 app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(admin_router)
 
 
 @app.get("/", response_class=HTMLResponse, tags=["Web App"])
