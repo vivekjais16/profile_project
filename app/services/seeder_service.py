@@ -41,8 +41,8 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
         email="vivekjais16@gmail.com",
         phone="+91 8920171244",
         location="Varanasi – 221001, Uttar Pradesh, India",
-        linkedin_url="https://linkedin.com/in/vivek-jaiswal",
-        github_url="https://github.com/vivekjaiswal",
+        linkedin_url="https://www.linkedin.com/in/vivek-jaiswal-979501100/",
+        github_url="https://github.com/vivekjais16",
         job_objective=(
             "Driving the development of scalable, AI-powered, and high-performance applications by leveraging 4.5+ years of "
             "expertise in Python, Django, FastAPI, Flask, Machine Learning, NLP, Generative AI, and Agentic AI technologies. "

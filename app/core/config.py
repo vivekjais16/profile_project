@@ -35,9 +35,9 @@ class Settings(BaseSettings):
     AUTHOR_NAME: str = "Vivek Jaiswal"
     AUTHOR_EMAIL: str = "vivekjais16@gmail.com"
     AUTHOR_PHONE: str = "+91 8920171244"
-    AUTHOR_LINKEDIN: str = "https://linkedin.com/in/vivek-jaiswal"
+    AUTHOR_LINKEDIN: str = "https://www.linkedin.com/in/vivek-jaiswal-979501100/"
     AUTHOR_LOCATION: str = "Varanasi – 221001, Uttar Pradesh, India"
-    AUTHOR_GITHUB: str = "https://github.com/vivekjaiswal"
+    AUTHOR_GITHUB: str = "https://github.com/vivekjais16"
 
     model_config = SettingsConfigDict(
         case_sensitive=True,

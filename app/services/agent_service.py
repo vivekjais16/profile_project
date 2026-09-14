@@ -96,7 +96,7 @@ class PortfolioAgentService:
             "intent": "Contact & Availability",
             "summary": (
                 "Vivek Jaiswal is available for Senior and Lead Software Engineer roles. "
-                "Email: vivekjais16@gmail.com | Phone: +91 8920171244 | LinkedIn: linkedin.com/in/vivek-jaiswal | Location: Varanasi, UP, India."
+                "Email: vivekjais16@gmail.com | Phone: +91 8920171244 | LinkedIn: linkedin.com/in/vivek-jaiswal-979501100/ | Location: Varanasi, UP, India."
             ),
             "skills": ["Communication", "Stakeholder Collaboration", "Technical Leadership"],
             "followups": [
