@@ -45,10 +45,9 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
         linkedin_url="https://www.linkedin.com/in/vivek-jaiswal-979501100/",
         github_url="https://github.com/vivekjais16",
         job_objective=(
-            "Driving the development of scalable, AI-powered, and high-performance applications by leveraging 4.5+ years of "
-            "expertise in Python, Django, FastAPI, Flask, Machine Learning, NLP, Generative AI, and Agentic AI technologies. "
-            "Seeking a Senior/Lead Software Engineer role to contribute to intelligent backend systems, autonomous LLM agents, "
-            "LangGraph workflows, Model Context Protocol (MCP) servers, and enterprise-scale, cloud-native data platforms."
+            "Architecting and scaling resilient, high-performance distributed backends, autonomous LLM agents, "
+            "LangGraph workflows, Model Context Protocol (MCP) servers, and enterprise cloud-native streaming "
+            "data platforms with 4.5+ years of production Python & AI expertise."
         ),
         profile_summary_1=(
             "Results-driven Senior Software Engineer with 4.5+ years of experience designing scalable backend systems and "
@@ -65,7 +64,7 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
         ),
         years_of_experience=4.5,
         is_available=True,
-        status_text="Available for Senior / Lead Backend & AI Roles",
+        status_text="Engineering Autonomous AI & Distributed Systems",
     )
     db.add(profile)
 
