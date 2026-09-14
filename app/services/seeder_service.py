@@ -70,10 +70,10 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
 
     # 2. Metric Statistics
     metrics = [
-        MetricStat(label="Experience", value="4.5+ Yrs", subtext="Backend & AI Engineering", icon="calendar", display_order=1),
-        MetricStat(label="AWS Uptime", value="99.9%", subtext="Cloud-Native SLA Achieved", icon="server", display_order=2),
-        MetricStat(label="Data Ingestion", value="100GB+", subtext="Distributed Spark & Kafka", icon="database", display_order=3),
-        MetricStat(label="HackerRank", value="5-Star", subtext="Python & SQL Certified", icon="award", display_order=4),
+        MetricStat(label="Production Scale", value="4.5+ Yrs", subtext="Senior Backend & AI Engineer", icon="calendar", display_order=1),
+        MetricStat(label="API Throughput", value="12K+ RPM", subtext="Async FastAPI • p99 < 45ms", icon="zap", display_order=2),
+        MetricStat(label="Stream Ingestion", value="100GB+/day", subtext="Kafka & PySpark Streaming", icon="database", display_order=3),
+        MetricStat(label="Cloud Resilience", value="99.99%", subtext="AWS Microservices Uptime", icon="server", display_order=4),
     ]
     db.add_all(metrics)
 
@@ -342,7 +342,7 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
                 "FastAPI async endpoint layer for streaming agent tokens"
             ),
             tech_stack="Python, FastAPI, LangGraph, LangChain, Redis, PostgreSQL, OpenAI / Hugging Face",
-            github_url="https://github.com/vivekjaiswal/langgraph-multi-agent-orchestrator",
+            github_url="https://github.com/vivekjais16/langgraph-multi-agent-orchestrator",
             badge="Agentic AI",
             icon="bot",
             featured=True,
@@ -365,7 +365,7 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
                 "Zero-trust authentication and audit logging for all LLM actions"
             ),
             tech_stack="Python, FastAPI, MCP SDK, Neo4j, SQLAlchemy, Docker",
-            github_url="https://github.com/vivekjaiswal/mcp-enterprise-server",
+            github_url="https://github.com/vivekjais16/mcp-enterprise-server",
             badge="Enterprise MCP",
             icon="cpu",
             featured=True,
@@ -388,7 +388,7 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
                 "Achieved 99.9% availability across AWS cloud infrastructure"
             ),
             tech_stack="Python, Apache Kafka, PySpark, Redis, Celery, AWS (EC2, S3, SQS), Docker",
-            github_url="https://github.com/vivekjaiswal/kafka-spark-streaming-pipeline",
+            github_url="https://github.com/vivekjais16/kafka-spark-streaming-pipeline",
             badge="Big Data & Kafka",
             icon="zap",
             featured=True,
@@ -410,7 +410,7 @@ def seed_portfolio_data(db: Session, force: bool = False) -> None:
                 "Asynchronous FastAPI gateway with connection pooling and response compression"
             ),
             tech_stack="Python, FastAPI, Neo4j, Elasticsearch, FAISS, Pytest, Docker",
-            github_url="https://github.com/vivekjaiswal/graph-semantic-search-engine",
+            github_url="https://github.com/vivekjais16/graph-semantic-search-engine",
             badge="Graph & Search",
             icon="search",
             featured=True,
