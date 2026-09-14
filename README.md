@@ -145,8 +145,8 @@ This pushes both `development` and `master` branches, plus tags, to your remote 
 - **Email**: [vivekjais16@gmail.com](mailto:vivekjais16@gmail.com)  
 - **LinkedIn**: [linkedin.com/in/vivek-jaiswal-979501100/](https://www.linkedin.com/in/vivek-jaiswal-979501100/)  
 - **GitHub**: [github.com/vivekjais16](https://github.com/vivekjais16)  
-- **Phone**: +91 8920171244  
-- **Location**: Varanasi – 221001, Uttar Pradesh, India  
+- **Phone**:   
+- **Location**: New Delhi, India  
 
 ---
 
