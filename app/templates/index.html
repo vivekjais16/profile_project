@@ -86,15 +86,6 @@
                     <!-- Main Frame -->
                     <div class="relative w-60 h-60 sm:w-72 sm:h-72 rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-emerald-500/50 bg-slate-950 shadow-2xl">
                         <img src="{{ profile.avatar_url or '/static/img/vivek_profile.jpg' }}" alt="{{ profile.full_name }}" class="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500" loading="eager">
-                        
-                        <!-- Floating Live Status Banner -->
-                        <div class="absolute bottom-3 inset-x-3 bg-dark-950/90 backdrop-blur-md border border-emerald-500/40 rounded-xl py-2 px-3 flex items-center justify-between text-[11px] font-mono shadow-xl">
-                            <span class="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                                {{ profile.status_text or 'Available to Hire' }}
-                            </span>
-                            <span class="text-slate-400 text-[10px]">India &bull; Remote</span>
-                        </div>
                     </div>
                 </div>
             </div>
