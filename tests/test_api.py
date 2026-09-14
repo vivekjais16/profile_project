@@ -150,10 +150,52 @@ def test_admin_login_flow(client):
     }
     response = client.post("/admin/login", data=login_data, follow_redirects=False)
     assert response.status_code == status.HTTP_303_SEE_OTHER
-    assert "vj_admin_session" in response.cookies
+    cookie_header = response.headers.get("set-cookie")
+    assert "vj_admin_session" in cookie_header
 
-    # Test accessing protected dashboard with session cookie
-    dash_response = client.get("/admin", cookies=response.cookies)
+    # Log in client
+    client.cookies.set("vj_admin_session", response.cookies["vj_admin_session"])
+
+    # Test accessing protected dashboard
+    dash_response = client.get("/admin")
     assert dash_response.status_code == status.HTTP_200_OK
     assert "System & Database Overview" in dash_response.text
+
+    # Test profile update
+    profile_data = {
+        "full_name": "VIVEK JAISWAL",
+        "headline": "Senior Software Engineer — Python | Agentic AI",
+        "sub_headline": "Architecting resilient microservices",
+        "email": "vivekjais16@gmail.com",
+        "phone": "+91 8920171244",
+        "location": "Varanasi, UP, India",
+        "linkedin_url": "https://www.linkedin.com/in/vivek-jaiswal-979501100/",
+        "github_url": "https://github.com/vivekjais16",
+        "job_objective": "To architect scalable backend systems",
+        "profile_summary_1": "Experienced backend developer",
+        "profile_summary_2": "Specialized in Python & LangGraph",
+        "years_of_experience": 4.5,
+    }
+    p_resp = client.post("/admin/profile", data=profile_data)
+    assert p_resp.status_code == status.HTTP_200_OK
+    assert "Profile details updated successfully!" in p_resp.text
+
+    # Test adding and deleting a project
+    new_proj = {
+        "title": "Test AI Agent System",
+        "tagline": "Real-time AI workflows",
+        "category": "Agentic AI",
+        "architecture_summary": "Built with FastAPI and Redis",
+        "key_features": "Feature 1\nFeature 2",
+        "tech_stack": "Python, FastAPI",
+        "github_url": "https://github.com/vivekjais16/test",
+        "badge": "Testing",
+    }
+    add_p = client.post("/admin/projects/add", data=new_proj, follow_redirects=False)
+    assert add_p.status_code == status.HTTP_303_SEE_OTHER
+
+    # Check project is listed
+    proj_view = client.get("/admin/projects")
+    assert "Test AI Agent System" in proj_view.text
+
 

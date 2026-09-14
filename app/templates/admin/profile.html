@@ -3,11 +3,11 @@
 {% block title %}Edit Profile & Bio{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
+<div class="space-y-8">
 
     <div class="flex items-center justify-between border-b border-slate-800 pb-4">
         <div>
-            <h1 class="text-2xl font-bold text-white tracking-tight">Edit Profile & Executive Bio</h1>
+            <h1 class="text-2xl font-bold text-white tracking-tight">Edit Profile, Metrics & Competencies</h1>
             <p class="text-xs text-slate-400 mt-0.5">All updates save instantly into SQLite database and update live on the web</p>
         </div>
     </div>
@@ -19,8 +19,12 @@
     </div>
     {% endif %}
 
+    <!-- Core Profile Details -->
     <form action="/admin/profile" method="post" class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-6">
-        
+        <h2 class="font-bold text-base text-white flex items-center gap-2">
+            <i data-lucide="user" class="w-4 h-4 text-emerald-400"></i> Core Information & Bio
+        </h2>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
                 <label for="full_name" class="block text-xs font-mono text-slate-300 mb-1">Full Name</label>
@@ -84,9 +88,83 @@
         </div>
 
         <button type="submit" class="px-8 py-3 rounded-xl font-semibold text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-dark-950 transition flex items-center gap-2">
-            <i data-lucide="save" class="w-4 h-4"></i> Save Profile Changes
+            <i data-lucide="save" class="w-4 h-4"></i> Save Profile Details
         </button>
     </form>
+
+    <!-- Metric Counter Cards (4 Hero Stats) -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+        <h2 class="font-bold text-base text-white flex items-center gap-2">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 text-cyan-400"></i> Hero Metric Cards ({{ metrics|length }})
+        </h2>
+        <p class="text-xs text-slate-400">Edit the 4 main statistics shown on the top hero section.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for m in metrics %}
+            <form action="/admin/metrics/edit/{{ m.id }}" method="post" class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+                <div class="text-xs font-mono text-emerald-400 font-semibold uppercase">Stat Card #{{ m.id }}</div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[11px] font-mono text-slate-400 mb-1">Value (e.g. 4.5+ Yrs)</label>
+                        <input type="text" name="value" value="{{ m.value }}" required class="w-full px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-mono text-slate-400 mb-1">Label (e.g. Experience)</label>
+                        <input type="text" name="label" value="{{ m.label }}" required class="w-full px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-mono text-slate-400 mb-1">Subtext</label>
+                    <input type="text" name="subtext" value="{{ m.subtext or '' }}" class="w-full px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white">
+                </div>
+                <button type="submit" class="w-full py-1.5 rounded-lg text-xs font-semibold bg-cyan-600 hover:bg-cyan-500 text-white transition">
+                    Update Card
+                </button>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Core Competencies List & Add -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h2 class="font-bold text-base text-white flex items-center gap-2">
+                <i data-lucide="grid" class="w-4 h-4 text-indigo-400"></i> Core Competencies ({{ competencies|length }})
+            </h2>
+        </div>
+
+        <!-- Add Form -->
+        <form action="/admin/competencies/add" method="post" class="p-4 rounded-xl bg-slate-900 border border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+            <div>
+                <label class="block text-xs font-mono text-slate-400 mb-1">Competency Title *</label>
+                <input type="text" name="title" required placeholder="e.g. LangGraph Multi-Agent Workflows" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white">
+            </div>
+            <div>
+                <label class="block text-xs font-mono text-slate-400 mb-1">Category *</label>
+                <input type="text" name="category" required value="AI & Agents" placeholder="Core Backend / Architecture" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white">
+            </div>
+            <button type="submit" class="py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition">
+                + Add Competency
+            </button>
+        </form>
+
+        <!-- List -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {% for c in competencies %}
+            <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between gap-2">
+                <div>
+                    <div class="text-xs font-semibold text-white">{{ c.title }}</div>
+                    <div class="text-[10px] text-indigo-400 font-mono">{{ c.category }}</div>
+                </div>
+                <form action="/admin/competencies/delete/{{ c.id }}" method="post" onsubmit="return confirm('Delete this competency?');">
+                    <button type="submit" class="p-1 rounded bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-500/30 transition">
+                        <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 
 </div>
 {% endblock %}

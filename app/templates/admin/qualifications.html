@@ -1,0 +1,157 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Manage Qualifications & Achievements{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+
+    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+            <h1 class="text-2xl font-bold text-white tracking-tight">Academic Foundation & Certifications</h1>
+            <p class="text-xs text-slate-400 mt-0.5">Manage degree information, HackerRank certifications, achievements, and soft skills in SQLite</p>
+        </div>
+    </div>
+
+    <!-- Education Section -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+        <h2 class="font-bold text-base text-white flex items-center gap-2">
+            <i data-lucide="graduation-cap" class="w-4 h-4 text-indigo-400"></i> Degree & Academic Foundation
+        </h2>
+
+        <form action="/admin/education/save" method="post" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Degree *</label>
+                    <input type="text" name="degree" required value="{{ education.degree if education else 'Bachelor of Technology (B.Tech.)' }}" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Field of Study *</label>
+                    <input type="text" name="field_of_study" required value="{{ education.field_of_study if education else 'Computer Science and Engineering' }}" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-mono text-slate-300 mb-1">University / Institution *</label>
+                    <input type="text" name="institution" required value="{{ education.institution if education else 'GLA University' }}" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Location *</label>
+                    <input type="text" name="location" required value="{{ education.location if education else 'Mathura (U.P.), India' }}" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Year & Grade *</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" name="completion_year" required value="{{ education.completion_year if education else '2017' }}" placeholder="Year" class="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                        <input type="text" name="grade" required value="{{ education.grade if education else 'CGPA: 7.61' }}" placeholder="Grade" class="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="px-6 py-2.5 rounded-xl font-semibold text-xs bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1.5">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i> Save Education
+            </button>
+        </form>
+    </div>
+
+    <!-- Achievements & Certifications List & Add -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-6">
+        <h2 class="font-bold text-base text-white flex items-center gap-2">
+            <i data-lucide="award" class="w-4 h-4 text-yellow-400"></i> Career Achievements & Certifications ({{ achievements|length }})
+        </h2>
+
+        <!-- Add Form -->
+        <form action="/admin/achievements/add" method="post" class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-4">
+            <div class="text-xs font-mono text-slate-400 font-semibold uppercase">Add Achievement / Certification</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Title *</label>
+                    <input type="text" name="title" required placeholder="e.g. HackerRank 5-Star (Python & SQL)" class="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-yellow-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Badge Tag *</label>
+                    <input type="text" name="badge" required placeholder="e.g. HackerRank 5-Star" class="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-yellow-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-mono text-slate-300 mb-1">Description *</label>
+                <textarea name="description" rows="2" required placeholder="Describe the accomplishment or certification..." class="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-yellow-500"></textarea>
+            </div>
+
+            <button type="submit" class="px-5 py-2.5 rounded-xl font-semibold text-xs bg-yellow-600 hover:bg-yellow-500 text-dark-950 transition flex items-center gap-1.5 font-bold">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Achievement
+            </button>
+        </form>
+
+        <!-- Achievements List -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for ach in achievements %}
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between gap-3">
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-0.5 rounded text-[10px] bg-yellow-950 text-yellow-300 border border-yellow-500/30 font-mono">{{ ach.badge }}</span>
+                        <form action="/admin/achievements/delete/{{ ach.id }}" method="post" onsubmit="return confirm('Delete this achievement?');">
+                            <button type="submit" class="p-1 rounded bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-500/30 transition">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="font-bold text-white text-sm">{{ ach.title }}</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">{{ ach.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Soft Skills & Methodologies -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-6">
+        <h2 class="font-bold text-base text-white flex items-center gap-2">
+            <i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Leadership & Collaborative Strengths ({{ soft_skills|length }})
+        </h2>
+
+        <!-- Add Soft Skill Form -->
+        <form action="/admin/soft-skills/add" method="post" class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-4">
+            <div class="text-xs font-mono text-slate-400 font-semibold uppercase">Add Soft Skill / Strength</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Trait / Skill Name *</label>
+                    <input type="text" name="name" required placeholder="e.g. Cross-Functional Engineering Collaboration" class="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Summary Description</label>
+                    <input type="text" name="description" placeholder="e.g. Partnering with Product Managers & DevOps..." class="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500">
+                </div>
+            </div>
+
+            <button type="submit" class="px-5 py-2.5 rounded-xl font-semibold text-xs bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1.5 font-bold">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Soft Skill
+            </button>
+        </form>
+
+        <!-- Soft Skills List -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% for sk in soft_skills %}
+            <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between gap-3">
+                <div class="space-y-0.5">
+                    <div class="font-bold text-white text-xs flex items-center gap-1.5">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        {{ sk.name }}
+                    </div>
+                    {% if sk.description %}
+                    <p class="text-[11px] text-slate-400">{{ sk.description }}</p>
+                    {% endif %}
+                </div>
+                <form action="/admin/soft-skills/delete/{{ sk.id }}" method="post" onsubmit="return confirm('Delete this soft skill?');">
+                    <button type="submit" class="p-1 rounded bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-500/30 transition">
+                        <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
