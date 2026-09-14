@@ -1,15 +1,35 @@
-name: Render Service Keep-Alive Pinger
+name: Render 24/7 Keep-Alive High-Frequency Pinger
 
 on:
   schedule:
-    # Runs every 10 minutes to prevent Render free-tier cold starts
-    - cron: '*/10 * * * *'
+    # Runs every 5 minutes (standard high frequency)
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 jobs:
-  ping:
+  keepalive:
+    name: Ping Render Endpoints
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Ping Live Portfolio Health Endpoint
+      - name: Ping All Live Endpoints to Prevent Sleep & Cold Start
         run: |
-          curl -s -f -m 20 https://vivek-jaiswal-portfolio.onrender.com/health || echo "Keepalive ping dispatched"
+          echo "=========================================================="
+          echo "Starting Keepalive Ping against Vivek Jaiswal Portfolio..."
+          echo "=========================================================="
+          
+          ENDPOINTS=(
+            "https://vivek-jaiswal-portfolio.onrender.com/health"
+            "https://vivek-jaiswal-portfolio.onrender.com/api/v1/health"
+            "https://vivek-jaiswal-portfolio.onrender.com/api/v1/profile"
+            "https://vivek-jaiswal-portfolio.onrender.com/"
+          )
+          
+          for url in "${ENDPOINTS[@]}"; do
+            echo "Pinging: $url"
+            status_code=$(curl -s -o /dev/null -w "%{http_code}" --retry 3 --retry-delay 2 --max-time 30 -A "RenderKeepAliveAgent/2.0" "$url" || echo "failed")
+            echo "Response status: $status_code"
+          done
+          
+          echo "Keepalive sequence successfully completed."
+
