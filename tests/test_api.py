@@ -134,6 +134,29 @@ def test_ai_agent_query(client):
     assert len(data["related_skills"]) > 0
 
 
+def test_ai_agent_dynamic_db_update(client, db_session):
+    """Verify that when profile experience or skills update in DB, AI agent dynamically returns them."""
+    from app.models.profile import Profile
+    from app.models.skill import Skill
+
+    profile = db_session.query(Profile).first()
+    original_exp = profile.years_of_experience
+    profile.years_of_experience = 5.5
+    db_session.commit()
+
+    # Query agent for overview
+    response = client.post("/api/v1/agent/query", json={"query": "Give me an overview of Vivek's experience"})
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "5.5+ Years" in data["response"] or "5.5" in data["response"]
+
+    # Restore original
+    profile.years_of_experience = original_exp
+    db_session.commit()
+
+
+
+
 def test_admin_unauthorized_redirect(client):
     """Verify unauthenticated access to /admin redirects to login."""
     response = client.get("/admin", follow_redirects=False)
