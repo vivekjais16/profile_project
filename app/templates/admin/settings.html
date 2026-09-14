@@ -133,5 +133,32 @@
         </form>
     </div>
 
+    <!-- Database Backup & Restore Management -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+                <h2 class="font-bold text-base text-white flex items-center gap-2">
+                    <i data-lucide="database" class="w-4 h-4 text-cyan-400"></i> Database Snapshot & Backup Control
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">Download a full database snapshot or restore custom data instantly across deployments.</p>
+            </div>
+            <a href="/admin/export-db" class="px-4 py-2 rounded-xl text-xs font-semibold bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1.5 shadow-md shadow-cyan-600/20">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Download Database Backup (.db)
+            </a>
+        </div>
+
+        <div class="pt-4 border-t border-slate-800/80">
+            <form action="/admin/import-db" method="post" enctype="multipart/form-data" class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <div class="flex-grow w-full sm:w-auto">
+                    <label class="block text-xs font-mono text-slate-300 mb-1">Restore Database from File (.db / .sqlite)</label>
+                    <input type="file" name="db_file" accept=".db,.sqlite,.sqlite3" required class="w-full text-xs text-slate-300 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-cyan-300 hover:file:bg-slate-700 cursor-pointer">
+                </div>
+                <button type="submit" onclick="return confirm('Restore this database file? Current records will be replaced with the uploaded file.');" class="px-5 py-2.5 rounded-xl font-semibold text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap self-end sm:self-auto">
+                    <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i> Restore Uploaded DB
+                </button>
+            </form>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

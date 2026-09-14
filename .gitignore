@@ -13,10 +13,7 @@ env/
 env.bak/
 venv.bak/
 
-# SQLite Databases & Local Data
-data/*.db
-data/*.sqlite
-data/*.sqlite3
+# SQLite Databases & Local Data (Track portfolio.db for persistent state across ephemeral deploys)
 *.db-journal
 *.db-wal
 *.db-shm

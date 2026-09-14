@@ -246,5 +246,21 @@ def test_system_logs_clear(client):
     assert clear_resp.status_code == status.HTTP_303_SEE_OTHER
 
 
+def test_database_export(client):
+    """Verify downloading SQLite database backup."""
+    login_data = {
+        "username": "vivekjais16",
+        "password": "VivekAdmin@2026",
+    }
+    login_resp = client.post("/admin/login", data=login_data, follow_redirects=False)
+    client.cookies.set("vj_admin_session", login_resp.cookies["vj_admin_session"])
+
+    export_resp = client.get("/admin/export-db")
+    assert export_resp.status_code == status.HTTP_200_OK
+    assert export_resp.headers.get("content-type") == "application/octet-stream"
+    assert "attachment" in export_resp.headers.get("content-disposition", "")
+
+
+
 
 

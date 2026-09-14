@@ -13,22 +13,33 @@ from app.core.config import settings
 # Ensure data directory exists
 settings.DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-# SQLAlchemy 2.0 Engine for SQLite
-engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    echo=settings.DEBUG,
-)
+# Parse and format database URL (Fix postgres:// -> postgresql:// for SQLAlchemy 2.0)
+db_url = settings.DATABASE_URL
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
 
+# SQLAlchemy 2.0 Engine Configuration
+if db_url.startswith("sqlite"):
+    engine = create_engine(
+        db_url,
+        connect_args={"check_same_thread": False},
+        echo=settings.DEBUG,
+    )
 
-# Enable SQLite WAL (Write-Ahead Logging) mode and foreign key constraints for concurrency & integrity
-@event.listens_for(engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA journal_mode=WAL")
-    cursor.execute("PRAGMA synchronous=NORMAL")
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
+    # Enable SQLite WAL (Write-Ahead Logging) mode and foreign key constraints
+    @event.listens_for(engine, "connect")
+    def set_sqlite_pragma(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA synchronous=NORMAL")
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+else:
+    engine = create_engine(
+        db_url,
+        pool_pre_ping=True,
+        echo=settings.DEBUG,
+    )
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

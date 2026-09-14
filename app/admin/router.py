@@ -923,6 +923,42 @@ async def admin_reseed_database(
     return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
 
 
+@admin_router.get("/export-db")
+async def admin_export_database(
+    admin_user: str = Depends(require_admin),
+):
+    """Download current SQLite database file directly from browser."""
+    db_file = settings.DATA_DIR / "portfolio.db"
+    if not db_file.exists():
+        raise HTTPException(status_code=404, detail="Database file not found.")
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return FileResponse(
+        path=str(db_file),
+        filename=f"portfolio_backup_{timestamp}.db",
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="portfolio_backup_{timestamp}.db"'},
+    )
+
+
+@admin_router.post("/import-db")
+async def admin_import_database(
+    db_file: UploadFile = File(...),
+    admin_user: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    """Upload and restore a database file from browser."""
+    if not db_file.filename.endswith((".db", ".sqlite", ".sqlite3")):
+        raise HTTPException(status_code=400, detail="Invalid database file format. Must be .db or .sqlite")
+    
+    target_path = settings.DATA_DIR / "portfolio.db"
+    with open(target_path, "wb") as buffer:
+        shutil.copyfileobj(db_file.file, buffer)
+    
+    log_event("INFO", "ADMIN", "Database Restored", f"Database restored from {db_file.filename}")
+    return RedirectResponse(url="/admin/settings?msg=Database+restored+successfully", status_code=status.HTTP_303_SEE_OTHER)
+
+
 # -----------------------------------------------------------------------------
 # System Diagnostics & Logs
 # -----------------------------------------------------------------------------
@@ -956,5 +992,6 @@ async def admin_logs_clear(
 ):
     clear_all_logs()
     return RedirectResponse(url="/admin/logs", status_code=status.HTTP_303_SEE_OTHER)
+
 
 
