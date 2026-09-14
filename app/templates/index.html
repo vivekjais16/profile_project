@@ -9,7 +9,7 @@
             <!-- Role Badge -->
             <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-mono bg-indigo-950/70 border border-indigo-500/40 text-indigo-300 shadow-inner">
                 <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-                <span>Python • Django • FastAPI • Generative AI & Agentic AI</span>
+                <span>{{ profile.headline if profile and profile.headline else 'Python • Django • FastAPI • Generative AI & Agentic AI' }}</span>
             </div>
 
             <!-- Main Headline -->
