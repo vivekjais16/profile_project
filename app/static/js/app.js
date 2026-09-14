@@ -324,3 +324,206 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 4000);
     }
 });
+
+// =========================================================================
+// Global Carousel & Modal Handlers (Netflix/Linear Style Showcase)
+// =========================================================================
+
+/**
+ * Smoothly scroll horizontal card containers
+ */
+function scrollRow(containerId, direction) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const scrollAmount = 360;
+    if (direction === "left") {
+        container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    } else {
+        container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
+}
+
+/**
+ * Open Project Deep Dive Modal Dialog
+ */
+function openProjectModal(index) {
+    if (typeof SHOWCASE_PROJECTS === "undefined" || !SHOWCASE_PROJECTS[index]) return;
+    const p = SHOWCASE_PROJECTS[index];
+    const modal = document.getElementById("showcase-modal");
+    if (!modal) return;
+
+    // Badge & Category
+    const badgeEl = document.getElementById("modal-badge");
+    const catEl = document.getElementById("modal-category");
+    if (badgeEl) badgeEl.textContent = p.badge || "Featured Architecture";
+    if (catEl) catEl.innerHTML = `<i class="fa-solid fa-microchip mr-1"></i> ${p.category || 'Platform'}`;
+
+    // Title & Tagline
+    const titleEl = document.getElementById("modal-title");
+    const taglineEl = document.getElementById("modal-tagline");
+    if (titleEl) titleEl.textContent = p.title;
+    if (taglineEl) taglineEl.textContent = p.tagline || "";
+
+    // Architecture Summary
+    const descEl = document.getElementById("modal-description");
+    if (descEl) descEl.textContent = p.architecture_summary || "";
+
+    // Key Features
+    const featSection = document.getElementById("modal-features-section");
+    const featList = document.getElementById("modal-features");
+    if (featSection && featList) {
+        if (p.key_features && p.key_features.trim()) {
+            featSection.style.display = "block";
+            const items = p.key_features.split(/\r?\n|;/).map(s => s.trim()).filter(Boolean);
+            featList.innerHTML = items.map(item => `
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-emerald-400 mt-1 shrink-0 text-xs"></i>
+                    <span>${item.replace(/^[•\-\*]\s*/, "")}</span>
+                </li>
+            `).join("");
+        } else {
+            featSection.style.display = "none";
+            featList.innerHTML = "";
+        }
+    }
+
+    // Tech Stack Tags
+    const techSection = document.getElementById("modal-tech-section");
+    const techTags = document.getElementById("modal-tech-tags");
+    if (techSection && techTags) {
+        if (p.tech_stack && p.tech_stack.trim()) {
+            techSection.style.display = "block";
+            const tags = p.tech_stack.split(",").map(s => s.trim()).filter(Boolean);
+            techTags.innerHTML = tags.map(tag => `
+                <span class="px-2.5 py-1 text-xs font-mono rounded bg-slate-800 text-indigo-200 border border-slate-700/80">
+                    ${tag}
+                </span>
+            `).join("");
+        } else {
+            techSection.style.display = "none";
+            techTags.innerHTML = "";
+        }
+    }
+
+    // Action Links
+    const githubBtn = document.getElementById("modal-github-btn");
+    const liveBtn = document.getElementById("modal-live-btn");
+    if (githubBtn) {
+        if (p.github_url && p.github_url.trim()) {
+            githubBtn.href = p.github_url;
+            githubBtn.style.display = "inline-flex";
+        } else {
+            githubBtn.style.display = "none";
+        }
+    }
+    if (liveBtn) {
+        if (p.live_demo_url && p.live_demo_url.trim()) {
+            liveBtn.href = p.live_demo_url;
+            liveBtn.style.display = "inline-flex";
+        } else {
+            liveBtn.style.display = "none";
+        }
+    }
+
+    // Reveal modal
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+/**
+ * Open Experience Deep Dive Modal Dialog
+ */
+function openExperienceModal(index) {
+    if (typeof SHOWCASE_EXPERIENCES === "undefined" || !SHOWCASE_EXPERIENCES[index]) return;
+    const e = SHOWCASE_EXPERIENCES[index];
+    const modal = document.getElementById("showcase-modal");
+    if (!modal) return;
+
+    // Badge & Category
+    const badgeEl = document.getElementById("modal-badge");
+    const catEl = document.getElementById("modal-category");
+    if (badgeEl) badgeEl.textContent = e.is_current ? "CURRENT ROLE" : "CAREER MILESTONE";
+    if (catEl) catEl.innerHTML = `<i class="fa-solid fa-briefcase mr-1"></i> ${e.company}`;
+
+    // Title & Tagline
+    const titleEl = document.getElementById("modal-title");
+    const taglineEl = document.getElementById("modal-tagline");
+    if (titleEl) titleEl.textContent = e.title;
+    if (taglineEl) taglineEl.textContent = `${e.dates} • ${e.location}`;
+
+    // Description / Summary
+    const descEl = document.getElementById("modal-description");
+    if (descEl) descEl.textContent = `Production engineering milestones, system reliability, and microservices impact at ${e.company}.`;
+
+    // Highlights
+    const featSection = document.getElementById("modal-features-section");
+    const featList = document.getElementById("modal-features");
+    if (featSection && featList) {
+        if (e.highlights && e.highlights.length > 0) {
+            featSection.style.display = "block";
+            featList.innerHTML = e.highlights.map(h => `
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-arrow-right text-cyan-400 mt-1 shrink-0 text-xs"></i>
+                    <span>${h}</span>
+                </li>
+            `).join("");
+        } else {
+            featSection.style.display = "none";
+            featList.innerHTML = "";
+        }
+    }
+
+    // Tech Stack Tags
+    const techSection = document.getElementById("modal-tech-section");
+    const techTags = document.getElementById("modal-tech-tags");
+    if (techSection && techTags) {
+        if (e.tech_stack && e.tech_stack.trim()) {
+            techSection.style.display = "block";
+            const tags = e.tech_stack.split(",").map(s => s.trim()).filter(Boolean);
+            techTags.innerHTML = tags.map(tag => `
+                <span class="px-2.5 py-1 text-xs font-mono rounded bg-slate-800 text-cyan-200 border border-slate-700/80">
+                    ${tag}
+                </span>
+            `).join("");
+        } else {
+            techSection.style.display = "none";
+            techTags.innerHTML = "";
+        }
+    }
+
+    // Hide Project Buttons for Experience Modal
+    const githubBtn = document.getElementById("modal-github-btn");
+    const liveBtn = document.getElementById("modal-live-btn");
+    if (githubBtn) githubBtn.style.display = "none";
+    if (liveBtn) liveBtn.style.display = "none";
+
+    // Reveal modal
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+/**
+ * Close Modal Dialog
+ */
+function closeShowcaseModal(event) {
+    if (event && event.target && event.target.id !== "showcase-modal" && !event.target.closest(".modal-close-btn") && !event.target.closest("button")) {
+        return;
+    }
+    const modal = document.getElementById("showcase-modal");
+    if (modal) {
+        modal.classList.add("hidden");
+        document.body.style.overflow = "";
+    }
+}
+
+// Close modal on Escape key
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        const modal = document.getElementById("showcase-modal");
+        if (modal && !modal.classList.contains("hidden")) {
+            modal.classList.add("hidden");
+            document.body.style.overflow = "";
+        }
+    }
+});
+
