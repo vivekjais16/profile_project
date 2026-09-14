@@ -118,3 +118,21 @@ body {
 .transition-smooth {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* Mobile-friendly tap highlights & touch targets */
+@media (max-width: 768px) {
+  html, body {
+    font-size: 15px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Ensure smooth touch scrolling on tables and chips */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+

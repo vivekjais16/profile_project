@@ -5,12 +5,28 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Mobile Menu Toggle
+    // 1. Mobile Menu Toggle & Auto-Close on Navigation
     const mobileMenuBtn = document.getElementById("mobile-menu-btn");
     const mobileMenu = document.getElementById("mobile-menu");
     if (mobileMenuBtn && mobileMenu) {
         mobileMenuBtn.addEventListener("click", () => {
             mobileMenu.classList.toggle("hidden");
+        });
+
+        // Close mobile menu when any nav link is tapped
+        mobileMenu.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", () => {
+                mobileMenu.classList.add("hidden");
+            });
+        });
+    }
+
+    // Admin Mobile Sidebar Toggle
+    const adminMobileBtn = document.getElementById("admin-mobile-menu-btn");
+    const adminSidebar = document.getElementById("admin-sidebar");
+    if (adminMobileBtn && adminSidebar) {
+        adminMobileBtn.addEventListener("click", () => {
+            adminSidebar.classList.toggle("hidden");
         });
     }
 
