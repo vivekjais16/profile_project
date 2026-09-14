@@ -56,10 +56,10 @@
                 <span class="text-slate-400 font-mono">Severity:</span>
                 <select name="level" onchange="this.form.submit()" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
                     <option value="ALL" {% if selected_level == 'ALL' %}selected{% endif %}>All Severities</option>
-                    <option value="ERROR" {% if selected_level == 'ERROR' %}selected{% endif %}>🔴 Errors Only</option>
-                    <option value="WARNING" {% if selected_level == 'WARNING' %}selected{% endif %}>🟡 Warnings Only</option>
-                    <option value="SUCCESS" {% if selected_level == 'SUCCESS' %}selected{% endif %}>🟢 Success Only</option>
-                    <option value="INFO" {% if selected_level == 'INFO' %}selected{% endif %}>🔵 Info Only</option>
+                    <option value="ERROR" {% if selected_level == 'ERROR' %}selected{% endif %}>Errors Only</option>
+                    <option value="WARNING" {% if selected_level == 'WARNING' %}selected{% endif %}>Warnings Only</option>
+                    <option value="SUCCESS" {% if selected_level == 'SUCCESS' %}selected{% endif %}>Success Only</option>
+                    <option value="INFO" {% if selected_level == 'INFO' %}selected{% endif %}>Info Only</option>
                 </select>
             </div>
 
@@ -67,12 +67,12 @@
                 <span class="text-slate-400 font-mono">Module:</span>
                 <select name="module" onchange="this.form.submit()" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
                     <option value="ALL" {% if selected_module == 'ALL' %}selected{% endif %}>All Modules</option>
-                    <option value="EMAIL" {% if selected_module == 'EMAIL' %}selected{% endif %}>📧 Email & SMTP</option>
-                    <option value="CONTACT" {% if selected_module == 'CONTACT' %}selected{% endif %}>📨 Contact Form</option>
-                    <option value="AI_AGENT" {% if selected_module == 'AI_AGENT' %}selected{% endif %}>🤖 AI Agent</option>
-                    <option value="AUTH" {% if selected_module == 'AUTH' %}selected{% endif %}>🔐 Authentication</option>
-                    <option value="ADMIN" {% if selected_module == 'ADMIN' %}selected{% endif %}>⚙️ Admin Panel</option>
-                    <option value="DATABASE" {% if selected_module == 'DATABASE' %}selected{% endif %}>🗄️ Database</option>
+                    <option value="EMAIL" {% if selected_module == 'EMAIL' %}selected{% endif %}>Email & SMTP</option>
+                    <option value="CONTACT" {% if selected_module == 'CONTACT' %}selected{% endif %}>Contact Form</option>
+                    <option value="AI_AGENT" {% if selected_module == 'AI_AGENT' %}selected{% endif %}>AI Agent</option>
+                    <option value="AUTH" {% if selected_module == 'AUTH' %}selected{% endif %}>Authentication</option>
+                    <option value="ADMIN" {% if selected_module == 'ADMIN' %}selected{% endif %}>Admin Panel</option>
+                    <option value="DATABASE" {% if selected_module == 'DATABASE' %}selected{% endif %}>Database</option>
                 </select>
             </div>
         </form>

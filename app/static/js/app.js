@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                         </div>
                         <a href="${downloadUrl}" download="Vivek_Jaiswal_Resume.pdf" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5 whitespace-nowrap">
-                            <span>⬇️ Download PDF</span>
+                            <i class="fa-solid fa-download"></i> <span>Download PDF</span>
                         </a>
                     </div>
                 `;
